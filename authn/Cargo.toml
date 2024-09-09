@@ -1,0 +1,37 @@
+[package]
+name = "authn"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+aes-gcm = "0.10.3"
+anyhow = "1.0.86"
+axum = { version = "0.7.5", features = ["macros"] }
+base64 = "0.22.1"
+chrono = { version = "0.4.38", features = ["serde"] }
+db = { path = "../db" }
+dif-presentation-exchange = "0.2.0"
+fred = { version = "9.2.1", features = ["i-pubsub"] }
+heck = "0.5.0"
+hex = "0.4.3"
+hmac = "0.12.1"
+http = "1.1.0"
+image = "0.25.2"
+jsonwebtoken = "9.3.0"
+common = { path = "../common" }
+maud = { version = "0.26.0", features = ["axum"] }
+openidconnect = "3.5.0"
+qrcode = "0.14.1"
+reqwest = { version = "0.12.7", features = ["json"] }
+serde = { version = "1.0.209", features = ["derive"] }
+serde_json = "1.0.128"
+sha2 = "0.10.8"
+sqlx = { version = "0.8.2", features = ["postgres"] }
+ssi = "0.7.0"
+tokio = { version = "1.40.0", features = ["full"] }
+tokio-stream = "0.1.16"
+tower-cookies = "0.10.0"
+tracing = "0.1.40"
+uuid = { version = "1.10.0", features = ["v4"] }
+secstr = "0.5.1"

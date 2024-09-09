@@ -1,0 +1,36 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.12.0/.schema/devbox.schema.json",
+  "packages": {
+    "act": "latest",
+    "cargo-watch": "latest",
+    "cargo-udeps": "latest",
+    "cocogitto": "latest",
+    "curlie": "latest",
+    "dotenvx": "latest",
+    "gum": "latest",
+    "jq": "latest",
+    "just": "latest",
+    "libiconv": "latest",
+    "postgresql_16": "latest",
+    "pre-commit": "latest",
+    "redis": "latest",
+    "rust-analyzer": "latest",
+    "rustup": "latest",
+    "sqlfluff": "latest",
+    "sqlx-cli": "latest",
+    "toml-cli": "latest",
+    "darwin.apple_sdk.frameworks.SystemConfiguration": {
+      "platforms": [
+        "x86_64-darwin",
+        "aarch64-darwin"
+      ]
+    }
+  },
+  "shell": {
+    "init_hook": [
+      "rustup override set $(toml get --raw $DEVBOX_PROJECT_ROOT/rust-toolchain.toml toolchain.channel)",
+      "test -f .devbox/virtenv/postgresql_16/data/PG_VERSION && test -d .devbox/virtenv/postgresql_16/data/base || initdb",
+      "sh dev/devbox/hello.sh"
+    ]
+  }
+}

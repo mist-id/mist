@@ -1,0 +1,26 @@
+[package]
+name = "db"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+aes-gcm = "0.10.3"
+anyhow = "1.0.87"
+async-trait = "0.1.82"
+chrono = { version = "0.4.38", features = ["serde"] }
+common = { path = "../common" }
+derive-new = "0.7.0"
+hex = "0.4.3"
+mockall = "0.13.0"
+secstr = "0.5.1"
+serde = { version = "1.0.209", features = ["derive"] }
+serde_json = "1.0.128"
+sqlx = { version = "0.8.2", features = [
+  "runtime-tokio",
+  "tls-rustls-ring",
+  "postgres",
+  "uuid",
+  "chrono",
+] }
+uuid = { version = "1.10.0", features = ["serde"] }

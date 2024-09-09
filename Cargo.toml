@@ -1,0 +1,9 @@
+[workspace]
+members = ["api", "authn", "common", "db", "runner"]
+exclude = ["example"]
+resolver = "2"
+
+[workspace.package]
+version = "0.0.0"
+edition = "2021"
+publish = false

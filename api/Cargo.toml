@@ -1,0 +1,26 @@
+[package]
+name = "api"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+anyhow = "1.0.86"
+axum = { version = "0.7.5", features = ["macros"] }
+axum_garde = "0.20.0"
+chrono = { version = "0.4.38", features = ["serde"] }
+db = { path = "../db" }
+garde = { version = "0.20.0", features = ["full"] }
+common = { path = "../common" }
+mockall = "0.13.0"
+serde = { version = "1.0.209", features = ["derive"] }
+serde_json = "1.0.128"
+sqlx = "0.8.2"
+tokio = { version = "1.40.0", features = ["full"] }
+tracing = "0.1.40"
+uuid = { version = "1.10.0", features = ["v4"] }
+
+[dev-dependencies]
+anyhow = "1.0.86"
+secstr = "0.5.1"
+tower = { version = "0.5.0", features = ["util"] }

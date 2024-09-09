@@ -1,0 +1,15 @@
+version: "0.5"
+is_strict: true
+processes:
+  init_postgres:
+    namespace: init
+    command: sh dev/devbox/init-postgres.sh
+    depends_on:
+      postgresql:
+        condition: process_healthy
+  mist:
+    command: RUST_LOG=tower_http=trace cargo watch -x run -p runner
+    depends_on:
+      init_postgres:
+        condition: process_completed_successfully
+
