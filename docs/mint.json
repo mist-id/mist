@@ -1,0 +1,64 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "Mist",
+  "logo": {
+    "dark": "/logo/light.svg",
+    "light": "/logo/dark.svg"
+  },
+  "favicon": "/logo/dark.svg",
+  "colors": {
+    "primary": "#8b5cf6",
+    "light": "#c4b5fd",
+    "dark": "#c4b5fd",
+    "anchors": {
+      "from": "#6b7280",
+      "to": "#1f2937"
+    }
+  },
+  "tabs": [
+    {
+      "name": "API Reference",
+      "url": "api-reference"
+    }
+  ],
+  "anchors": [
+    {
+      "name": "Documentation",
+      "icon": "book-open-cover",
+      "url": "https://docs.mist.id"
+    },
+    {
+      "name": "Community",
+      "icon": "rocket",
+      "url": "https://rocket.chat"
+    },
+    {
+      "name": "Code",
+      "icon": "github",
+      "url": "https://github.com/mist-id/mist"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Get Started",
+      "pages": [
+        "introduction"
+      ]
+    },
+    {
+      "group": "Development",
+      "pages": [
+        "development/quick-start",
+        {
+          "group": "Overview",
+          "pages": [
+            "development/overview/platform-architecture",
+            "development/overview/authentication-flow",
+            "development/overview/service-keys"
+          ]
+        },
+        "development/reading-material"
+      ]
+    }
+  ]
+}

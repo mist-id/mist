@@ -1,0 +1,54 @@
+---
+title: Quick start
+---
+
+## Dependencies
+
+The only dependency at the moment is [devbox](https://www.jetify.com/devbox/docs/); all other dependencies are defined within it.
+
+## Setting everything up
+
+1. **Clone the repository and navigate to the project directory**.
+
+```bash
+gh repo clone mist-id/mist && cd mist
+```
+
+2. **Start the development environment**. This may take a while the first time as it downloads all dependencies.
+
+```bash
+devbox shell
+```
+
+3. **Copy over the env config**. Be sure to set `AUTHN_BASE_URL` to your local IP address if you plan
+   on testing the authentication flow with another device.
+
+```bash
+cp .env.example .env
+```
+
+4. **Start Mist and external services**.
+
+```bash
+just dev
+```
+
+5. **Create a tenant for users to sign up to**. This command expects a redirect URL and webhook URL as args.
+   The below assumes that you're also running the example app.
+
+```bash
+just seed http://localhost:3000/ http://localhost:3000/hook
+```
+
+## Running the example Service
+
+While the Mist itself is ran via devbox, the example app needs to be ran separately.
+
+```bash
+cd example/ && cargo run
+```
+
+## Testing
+
+To test the authentication flow, you'll need an SIOP-enabled app.
+Any should work, but development has so far been done using [Sphereon Wallet](https://github.com/Sphereon-Opensource/mobile-wallet) ([iOS](https://apps.apple.com/us/app/sphereon-wallet/id1661096796), [Android](https://play.google.com/store/apps/details?id=com.sphereon.ssi.wallet&hl=en_US)).

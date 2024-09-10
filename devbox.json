@@ -11,6 +11,7 @@
     "jq": "latest",
     "just": "latest",
     "libiconv": "latest",
+    "nodejs": "latest",
     "postgresql_16": "latest",
     "pre-commit": "latest",
     "redis": "latest",

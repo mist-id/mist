@@ -1,0 +1,65 @@
+---
+title: Platform architecture
+---
+
+Mist is built as what's sometimes called a **modular monolith**. The opaque nodes in the following flowchart
+indicate a future component.
+
+```mermaid
+%%{
+  init: {
+    'themeVariables': {
+      'lineColor': '#94a3b8'
+    }
+  }
+}%%
+
+graph TD
+  subgraph components[Components]
+    subgraph apps[Applications]
+      api
+      authn
+      didc
+    end
+
+    authz
+    runner
+    ssi
+    db
+  end
+
+  runner --> apps
+  api --> db
+  authz --> db
+  authn --> db
+  ssi --> db
+  didc --> db
+  db --> database[(Database)]
+
+  classDef group fill:#f8fafc,stroke:#020617;
+  classDef runner fill:#7dd3fc,stroke:#020617;
+  classDef app-current fill:#ecfccb,stroke:#020617;
+  classDef app-future fill:#fefce8,stroke:#020617,stroke-dasharray:3;
+  classDef component-current fill:#a5b4fc,stroke:#020617;
+  classDef component-future fill:#e0e7ff,stroke:#020617,stroke-dasharray:3;
+  classDef database fill:#475569,stroke:#020617,color:#f8fafc;
+
+  class components,apps group;
+  class runner runner;
+  class api,authn app-current;
+  class didc app-future;
+  class authz,db component-current;
+  class ssi component-future;
+  class database database;
+```
+
+## Components
+
+Each component is a Rust crate that lives in the Mist monorepo.
+
+| Component  | Description                                                                              |
+| ---------- | ---------------------------------------------------------------------------------------- |
+| **runner** | The entry point, responsible for starting apps from components that export axum routers. |
+| **api**    | The REST API, used by the Service to manage the Mist instance.                           |
+| **authn**  | The authentication service, responsible for user authentication.                         |
+| **db**     | The data layer, used by all components to store data.                                    |

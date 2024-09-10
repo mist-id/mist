@@ -1,0 +1,8 @@
+{
+  "name": "mist",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "mintlify": "^4.0.219"
+  }
+}

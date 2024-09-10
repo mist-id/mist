@@ -1,3 +1,4 @@
 .env
 devbox.d/
+node_modules/
 target/
