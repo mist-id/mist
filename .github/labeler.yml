@@ -1,0 +1,12 @@
+pkg-docs:
+- changed-files:
+  - any-glob-to-any-file: docs/*
+pkg-api:
+- changed-files:
+  - any-glob-to-any-file: api/*
+pkg-authn:
+- changed-files:
+  - any-glob-to-any-file: authn/*
+pkg-db:
+- changed-files:
+  - any-glob-to-any-file: db/*
