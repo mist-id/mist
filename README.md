@@ -40,7 +40,7 @@ but it is not yet feature-complete or production-ready. Current capabilities inc
 - Simple user creation and storage within a service
 - Basic session management
 
-Check out the [roadmap]() for more information on upcoming features.
+Check out the [roadmap](https://github.com/orgs/mist-id/projects/1) for more information on upcoming features.
 
 ## Looking to Contribute?
 
