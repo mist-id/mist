@@ -29,8 +29,8 @@
     },
     {
       "name": "Community",
-      "icon": "rocket",
-      "url": "https://rocket.chat"
+      "icon": "message",
+      "url": "https://github.com/mist-id/mist/discussions"
     },
     {
       "name": "Code",
@@ -49,6 +49,7 @@
       "group": "Development",
       "pages": [
         "development/quick-start",
+        "development/guidelines",
         {
           "group": "Overview",
           "pages": [

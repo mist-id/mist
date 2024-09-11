@@ -44,7 +44,7 @@ Check out the [roadmap]() for more information on upcoming features.
 
 ## Looking to Contribute?
 
-Check the [docs](https://docs.mist.id) for more information on how to get started with development.
+Check the [development docs](https://docs.mist.id/development/quick-start) for more information on how to get started with development.
 
 ## Acknowledgements
 
