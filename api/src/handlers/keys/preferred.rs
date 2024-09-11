@@ -3,7 +3,7 @@ use axum::{
     response::IntoResponse,
     Json,
 };
-use common::error::Error;
+use common::Result;
 use db::models::key::KeyKind;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -24,7 +24,7 @@ pub(crate) async fn handler(
     State(state): State<ApiState>,
     Path(path): Path<PreferredPath>,
     Query(query): Query<PreferredQuery>,
-) -> Result<impl IntoResponse, Error> {
+) -> Result<impl IntoResponse> {
     let response = Json(
         state
             .repos
@@ -40,7 +40,6 @@ pub(crate) async fn handler(
 mod tests {
     use std::{future::ready, sync::Arc};
 
-    use anyhow::Result;
     use axum::{
         body::Body,
         http::{self, Request, StatusCode},

@@ -5,7 +5,7 @@ use axum::{
     response::IntoResponse,
 };
 use base64::prelude::*;
-use common::error::Error;
+use common::Result;
 use db::models::key::KeyKind;
 use dif_presentation_exchange::PresentationDefinition;
 use fred::prelude::*;
@@ -43,7 +43,7 @@ pub(crate) async fn handler(
     cookies: Cookies,
     State(state): State<AuthnState>,
     Path(path): Path<CreatePath>,
-) -> Result<impl IntoResponse, Error> {
+) -> Result<impl IntoResponse> {
     let service = state.repos.services.get_by_name(&path.service_name).await?;
 
     let Some(service) = service else {

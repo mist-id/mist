@@ -3,7 +3,7 @@ use axum::{
     response::IntoResponse,
     Json,
 };
-use common::error::Error;
+use common::Result;
 use serde::Deserialize;
 use uuid::Uuid;
 
@@ -17,7 +17,7 @@ pub(crate) struct DestroyPath {
 pub(crate) async fn handler(
     State(state): State<ApiState>,
     Path(path): Path<DestroyPath>,
-) -> Result<impl IntoResponse, Error> {
+) -> Result<impl IntoResponse> {
     let response = Json(state.repos.services.destroy(&path.id).await?);
 
     Ok(response)
@@ -27,7 +27,6 @@ pub(crate) async fn handler(
 mod tests {
     use std::{future::ready, sync::Arc};
 
-    use anyhow::Result;
     use axum::{
         body::Body,
         extract::Request,

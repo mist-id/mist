@@ -1,6 +1,7 @@
 use axum::{extract::State, response::IntoResponse, Json};
-use common::error::Error;
+use common::Result;
 use db::models::{identifier::CreateIdentifier, user::CreateUser};
+use eyre::eyre;
 use fred::prelude::*;
 use http::StatusCode;
 
@@ -14,7 +15,7 @@ use crate::{
 pub(crate) async fn handler(
     State(state): State<AuthnState>,
     Json(body): Json<RegistrationWebhookResponse>,
-) -> Result<impl IntoResponse, Error> {
+) -> Result<impl IntoResponse> {
     let session_data = state
         .redis_client
         .get::<String, _>(&format!("{REDIS_AUTH_HOOK_KEY}-{}", body.meta.id))
@@ -23,7 +24,7 @@ pub(crate) async fn handler(
     let session_data = serde_json::from_str::<AuthHookSessionData>(&session_data)?;
 
     if session_data.hook_id != body.meta.id {
-        return Err(anyhow::anyhow!("invalid hook id").into());
+        return Err(eyre!("invalid hook id").into());
     }
 
     match body.meta.kind {
@@ -35,7 +36,7 @@ async fn handle_registration(
     state: &AuthnState,
     hook_session: &AuthHookSessionData,
     body: &RegistrationWebhookResponse,
-) -> Result<impl IntoResponse, Error> {
+) -> Result<impl IntoResponse> {
     // Get the user's session data.
     // ---------------------------
 

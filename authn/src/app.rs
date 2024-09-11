@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use axum::Router;
-use common::{env::Environment, error::Error};
+use common::{env::Environment, Result};
 use db::repos::{
     identifiers::PgIdentifierRepo, keys::PgKeyRepo, services::PgServiceRepo, users::PgUserRepo,
 };
@@ -47,7 +47,7 @@ pub async fn app(env: Environment) -> Router {
         .layer(CookieManagerLayer::new())
 }
 
-async fn create_redis_client(env: &Environment) -> Result<RedisClient, Error> {
+async fn create_redis_client(env: &Environment) -> Result<RedisClient> {
     let config = RedisConfig::from_url(&env.redis_url)?;
     let client = RedisClient::new(config, None, None, None);
 

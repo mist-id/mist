@@ -1,6 +1,5 @@
 use std::{convert::Infallible, sync::Arc};
 
-use anyhow::Context;
 use axum::{
     extract::State,
     response::{
@@ -8,7 +7,8 @@ use axum::{
         Sse,
     },
 };
-use common::error::Error;
+use common::Result;
+use eyre::OptionExt;
 use fred::prelude::*;
 use tokio::sync::mpsc;
 use tokio_stream::{wrappers::ReceiverStream, Stream};
@@ -19,8 +19,8 @@ use crate::{state::AuthnState, COOKIE_KEY, REDIS_RESPONSE_RECEIVED_KEY};
 pub(crate) async fn handler(
     cookies: Cookies,
     State(state): State<AuthnState>,
-) -> Result<Sse<impl Stream<Item = Result<Event, Infallible>>>, Error> {
-    let cookie = cookies.get(COOKIE_KEY).context("no cookie")?;
+) -> Result<Sse<impl Stream<Item = std::result::Result<Event, Infallible>>>> {
+    let cookie = cookies.get(COOKIE_KEY).ok_or_eyre("no cookie")?;
 
     let (tx, rx) = mpsc::channel(100);
     let tx_arc = Arc::new(tx);

@@ -1,11 +1,12 @@
 use std::net::SocketAddr;
 
-use common::{env::Environment, error::Error};
+use common::{env::Environment, Result};
 use tokio::net::TcpListener;
 use tower_http::trace::TraceLayer;
 
 #[tokio::main]
-async fn main() -> Result<(), Error> {
+async fn main() -> Result<()> {
+    color_eyre::install()?;
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::DEBUG)
         .init();

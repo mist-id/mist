@@ -5,7 +5,7 @@ use axum::{
     Json,
 };
 use axum_garde::WithValidation;
-use common::error::Error;
+use common::Result;
 use db::models::key::{CreateKey, KeyKind};
 use garde::Validate;
 use serde::{Deserialize, Serialize};
@@ -33,7 +33,7 @@ pub(crate) async fn handler(
     State(state): State<ApiState>,
     Path(path): Path<CreatePath>,
     WithValidation(body): WithValidation<Json<CreateBody>>,
-) -> Result<impl IntoResponse, Error> {
+) -> Result<impl IntoResponse> {
     let key = state
         .repos
         .keys
@@ -55,7 +55,6 @@ pub(crate) async fn handler(
 mod tests {
     use std::{future::ready, sync::Arc};
 
-    use anyhow::Result;
     use axum::{body::Body, extract::Request, http};
     use common::env::Environment;
     use db::{

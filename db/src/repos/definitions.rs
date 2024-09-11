@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use common::error::Error;
+use common::Result;
 use sqlx::{query_file_as, PgPool};
 
 use crate::models::definition::{CreateDefinition, Definition};
@@ -7,7 +7,7 @@ use crate::models::definition::{CreateDefinition, Definition};
 #[async_trait]
 #[mockall::automock]
 pub trait DefinitionRepo: Send + Sync {
-    async fn create(&self, data: &CreateDefinition) -> Result<Definition, Error>;
+    async fn create(&self, data: &CreateDefinition) -> Result<Definition>;
 }
 
 pub struct PgDefinitionRepo {
@@ -22,7 +22,7 @@ impl PgDefinitionRepo {
 
 #[async_trait]
 impl DefinitionRepo for PgDefinitionRepo {
-    async fn create(&self, data: &CreateDefinition) -> Result<Definition, Error> {
+    async fn create(&self, data: &CreateDefinition) -> Result<Definition> {
         let profile = query_file_as!(
             Definition,
             "sql/definitions/create.sql",

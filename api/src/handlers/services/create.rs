@@ -1,6 +1,6 @@
 use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
 use axum_garde::WithValidation;
-use common::error::Error;
+use common::Result;
 use db::models::{
     definition::{CreateDefinition, Value},
     service::CreateService,
@@ -25,7 +25,7 @@ pub(crate) struct CreateBody {
 pub(crate) async fn handler(
     State(state): State<ApiState>,
     WithValidation(body): WithValidation<Json<CreateBody>>,
-) -> Result<impl IntoResponse, Error> {
+) -> Result<impl IntoResponse> {
     let service = state
         .repos
         .services
@@ -54,7 +54,6 @@ pub(crate) async fn handler(
 mod tests {
     use std::{future::ready, sync::Arc};
 
-    use anyhow::Result;
     use axum::{body::Body, extract::Request, http};
     use common::env::Environment;
     use db::{
