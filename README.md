@@ -1,11 +1,10 @@
 <div align="center">
   <h4><span style="font-weight: normal">Your identity, your data — </span>Anchored in <a href="https://mist.id">Mist</a><h4>
 
-![GitHub License](https://img.shields.io/github/license/mist-id/mist)
-![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-green)
-![CI Status](https://img.shields.io/github/actions/workflow/status/mist-id/mist/ci.yml?label=CI)
-![Status](https://img.shields.io/badge/status-Proof%20of%20Concept-white)
-
+  ![License](https://img.shields.io/badge/License-Apache_2.0%2C_MIT-black)
+  ![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-black)
+  ![Status](https://img.shields.io/badge/Status-Proof%20of%20Concept-white)
+  ![CI Status](https://img.shields.io/github/actions/workflow/status/mist-id/mist/ci.yml?label=CI)
 </div>
 
 > **Mist** is an open-source Identity and Access Management (IAM) platform designed to bridge the gap between emerging technologies within the Self-Sovereign Identity (SSI) space and traditional web applications.
