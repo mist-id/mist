@@ -5,7 +5,10 @@ use common::{env::Environment, error::Error};
 use db::repos::{
     identifiers::PgIdentifierRepo, keys::PgKeyRepo, services::PgServiceRepo, users::PgUserRepo,
 };
-use fred::prelude::{ClientLike, RedisClient};
+use fred::{
+    prelude::{ClientLike, RedisClient},
+    types::RedisConfig,
+};
 use sqlx::postgres::PgPoolOptions;
 use tower_cookies::CookieManagerLayer;
 
@@ -28,9 +31,9 @@ pub async fn app(env: Environment) -> Router {
         identifiers: Arc::new(PgIdentifierRepo::new(postgres.clone())),
     };
 
-    let redis_client = create_redis_client().await.unwrap();
-    let redis_pub_client = create_redis_client().await.unwrap();
-    let redis_sub_client = create_redis_client().await.unwrap();
+    let redis_client = create_redis_client(&env).await.unwrap();
+    let redis_pub_client = create_redis_client(&env).await.unwrap();
+    let redis_sub_client = create_redis_client(&env).await.unwrap();
 
     Router::new()
         .nest("", handlers::router())
@@ -44,8 +47,9 @@ pub async fn app(env: Environment) -> Router {
         .layer(CookieManagerLayer::new())
 }
 
-async fn create_redis_client() -> Result<RedisClient, Error> {
-    let client = RedisClient::default();
+async fn create_redis_client(env: &Environment) -> Result<RedisClient, Error> {
+    let config = RedisConfig::from_url(&env.redis_url)?;
+    let client = RedisClient::new(config, None, None, None);
 
     client.init().await?;
 
