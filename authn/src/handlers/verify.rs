@@ -1,9 +1,9 @@
 use std::str::FromStr;
 
-use anyhow::Context;
 use axum::{extract::State, response::IntoResponse, Form};
-use common::error::Error;
+use common::Result;
 use db::models::key::KeyKind;
+use eyre::{eyre, OptionExt};
 use fred::prelude::*;
 use http::StatusCode;
 use openidconnect::core::CoreIdTokenClaims;
@@ -36,14 +36,14 @@ pub(crate) struct VerifyBody {
 pub(crate) async fn handler(
     State(state): State<AuthnState>,
     Form(body): Form<VerifyBody>,
-) -> Result<impl IntoResponse, Error> {
+) -> Result<impl IntoResponse> {
     // Get the user's session data.
     // ---------------------
 
     let parts = body.state.split(':').collect::<Vec<&str>>();
 
     let [received_state, received_session_id, received_signature] = parts.as_slice() else {
-        return Err(anyhow::anyhow!("state does not match expected structure").into());
+        return Err(eyre!("state does not match expected structure").into());
     };
 
     let session_data = state
@@ -80,7 +80,7 @@ pub(crate) async fn handler(
     )?;
 
     if received_signature != &expected_signature {
-        return Err(anyhow::anyhow!("state does not match").into());
+        return Err(eyre!("state does not match").into());
     }
 
     // Get some useful information from the JWT header.
@@ -90,7 +90,7 @@ pub(crate) async fn handler(
     let header = jsonwebtoken::decode_header(&body.id_token)?;
 
     // The `kid` in this case is the user's DID.
-    let did = header.kid.context("header missing kid")?;
+    let did = header.kid.ok_or_eyre("header missing kid")?;
 
     // Resolve the DID.
     // ----------------
@@ -103,22 +103,22 @@ pub(crate) async fn handler(
     .json::<ResolutionResult>()
     .await?
     .did_document
-    .context("no document")?;
+    .ok_or_eyre("no document")?;
 
     // Get the verification method to use for authentication.
     // ------------------------------------------------------
 
     let verif_methods = document
         .verification_method
-        .context("document is missing verification methods")?;
+        .ok_or_eyre("document is missing verification methods")?;
     let auth_methods = document
         .authentication
-        .context("document is missing authentication property")?;
+        .ok_or_eyre("document is missing authentication property")?;
 
     // Get the first auth method for convenience.
     let first = auth_methods
         .first()
-        .context("document is missing an auth method")?;
+        .ok_or_eyre("document is missing an auth method")?;
 
     let method = match first {
         // If the verification method is a DID URL, we need to resolve that DID and find the
@@ -132,11 +132,11 @@ pub(crate) async fn handler(
             .json::<ResolutionResult>()
             .await?
             .did_document
-            .context("no document")?;
+            .ok_or_eyre("no document")?;
 
             &other_document
                 .verification_method
-                .context("other document is missing verification methods")?
+                .ok_or_eyre("other document is missing verification methods")?
                 .iter()
                 .filter_map(|m| {
                     if let VerificationMethod::Map(v) = m {
@@ -146,7 +146,7 @@ pub(crate) async fn handler(
                     }
                 })
                 .find(|m| m.id == url.to_string())
-                .context("could not find verification method")?
+                .ok_or_eyre("could not find verification method")?
                 .clone()
         }
         // If the verification method is a DID URL fragment, we need to find the verification
@@ -161,7 +161,7 @@ pub(crate) async fn handler(
                 }
             })
             .find(|m| m.id == url.to_string())
-            .context("could not find verification method")?
+            .ok_or_eyre("could not find verification method")?
             .clone(),
         // In the case where it's a map, we can just return it directly.
         VerificationMethod::Map(method) => method,
@@ -173,7 +173,7 @@ pub(crate) async fn handler(
     let jwk = method
         .public_key_jwk
         .as_ref()
-        .context("could not get public jwk")?;
+        .ok_or_eyre("could not get public jwk")?;
 
     let decoded_id_token = ssi::jwt::decode_verify::<CoreIdTokenClaims>(&body.id_token, jwk)?;
 
@@ -182,19 +182,19 @@ pub(crate) async fn handler(
 
     let parts = decoded_id_token
         .nonce()
-        .context("could not find nonce")?
+        .ok_or_eyre("could not find nonce")?
         .secret()
         .split(':')
         .collect::<Vec<&str>>();
     let (received_nonce, received_signature) = parts
         .first()
         .zip(parts.get(1))
-        .context("nonce does not match expected structure")?;
+        .ok_or_eyre("nonce does not match expected structure")?;
 
     let expected_signature = sign_nonce(&service_key, received_nonce)?;
 
     if received_signature != &expected_signature {
-        return Err(anyhow::anyhow!("invalid nonce").into());
+        return Err(eyre!("invalid nonce").into());
     }
 
     // Get their profile data from the received VCs.
@@ -205,10 +205,10 @@ pub(crate) async fn handler(
     let decoded_credential = ssi::jwt::decode_unverified::<SphereonCredentialWrapper>(&credential)?;
 
     let OneOrMany::One(subject) = decoded_credential.vc.credential_subject else {
-        return Err(anyhow::anyhow!("multiple subjects").into());
+        return Err(eyre!("multiple subjects").into());
     };
 
-    let profile = subject.property_set.context("no property set")?;
+    let profile = subject.property_set.ok_or_eyre("no property set")?;
     let json_map = profile.into_iter().collect::<Map<String, Value>>();
 
     // Send user data to the services' webhook endpoint so they can create the user on their end.

@@ -3,7 +3,7 @@ use axum::{
     response::IntoResponse,
     Json,
 };
-use common::error::Error;
+use common::Result;
 use serde::Deserialize;
 
 use crate::state::ApiState;
@@ -17,7 +17,7 @@ pub(crate) struct ListQuery {
 pub(crate) async fn handler(
     State(state): State<ApiState>,
     Query(query): Query<ListQuery>,
-) -> Result<impl IntoResponse, Error> {
+) -> Result<impl IntoResponse> {
     let limit = query.limit.unwrap_or(10);
     let offset = (query.page.unwrap_or(1) - 1) * limit;
 
@@ -36,7 +36,6 @@ pub(crate) async fn handler(
 mod tests {
     use std::{future::ready, sync::Arc};
 
-    use anyhow::Result;
     use axum::{
         body::Body,
         http::{self, Request, StatusCode},
@@ -47,6 +46,8 @@ mod tests {
         repos::{definitions::MockDefinitionRepo, keys::MockKeyRepo, services::MockServiceRepo},
     };
     use tower::ServiceExt;
+
+    use super::*;
 
     use crate::{
         handlers::services::router,

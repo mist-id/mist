@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use common::error::Error;
+use common::Result;
 use sqlx::{query_file_as, PgPool};
 use uuid::Uuid;
 
@@ -11,13 +11,13 @@ use crate::models::{
 #[async_trait]
 #[mockall::automock]
 pub trait ServiceRepo: Send + Sync {
-    async fn list(&self, limit: i64, offset: i64) -> Result<Vec<Service>, Error>;
-    async fn create(&self, data: &CreateService) -> Result<Service, Error>;
-    async fn get(&self, id: &Uuid) -> Result<Option<Service>, Error>;
-    async fn get_by_name(&self, name: &str) -> Result<Option<Service>, Error>;
-    async fn update(&self, id: &Uuid, date: &UpdateService) -> Result<Service, Error>;
-    async fn destroy(&self, id: &Uuid) -> Result<Service, Error>;
-    async fn get_default_profile(&self, id: &Uuid) -> Result<Definition, Error>;
+    async fn list(&self, limit: i64, offset: i64) -> Result<Vec<Service>>;
+    async fn create(&self, data: &CreateService) -> Result<Service>;
+    async fn get(&self, id: &Uuid) -> Result<Option<Service>>;
+    async fn get_by_name(&self, name: &str) -> Result<Option<Service>>;
+    async fn update(&self, id: &Uuid, date: &UpdateService) -> Result<Service>;
+    async fn destroy(&self, id: &Uuid) -> Result<Service>;
+    async fn get_default_profile(&self, id: &Uuid) -> Result<Definition>;
 }
 
 pub struct PgServiceRepo {
@@ -32,7 +32,7 @@ impl PgServiceRepo {
 
 #[async_trait]
 impl ServiceRepo for PgServiceRepo {
-    async fn list(&self, limit: i64, offset: i64) -> Result<Vec<Service>, Error> {
+    async fn list(&self, limit: i64, offset: i64) -> Result<Vec<Service>> {
         let profile = query_file_as!(Service, "sql/services/list.sql", &limit, &offset)
             .fetch_all(&self.pool)
             .await?;
@@ -40,7 +40,7 @@ impl ServiceRepo for PgServiceRepo {
         Ok(profile)
     }
 
-    async fn create(&self, data: &CreateService) -> Result<Service, Error> {
+    async fn create(&self, data: &CreateService) -> Result<Service> {
         let service = query_file_as!(
             Service,
             "sql/services/create.sql",
@@ -54,7 +54,7 @@ impl ServiceRepo for PgServiceRepo {
         Ok(service)
     }
 
-    async fn get(&self, id: &Uuid) -> Result<Option<Service>, Error> {
+    async fn get(&self, id: &Uuid) -> Result<Option<Service>> {
         let profile = query_file_as!(Service, "sql/services/get.sql", &id)
             .fetch_optional(&self.pool)
             .await?;
@@ -62,7 +62,7 @@ impl ServiceRepo for PgServiceRepo {
         Ok(profile)
     }
 
-    async fn get_by_name(&self, name: &str) -> Result<Option<Service>, Error> {
+    async fn get_by_name(&self, name: &str) -> Result<Option<Service>> {
         let profile = query_file_as!(Service, "sql/services/get_by_name.sql", &name)
             .fetch_optional(&self.pool)
             .await?;
@@ -70,7 +70,7 @@ impl ServiceRepo for PgServiceRepo {
         Ok(profile)
     }
 
-    async fn update(&self, id: &Uuid, data: &UpdateService) -> Result<Service, Error> {
+    async fn update(&self, id: &Uuid, data: &UpdateService) -> Result<Service> {
         let service = self.get(id).await?.ok_or(sqlx::Error::RowNotFound)?;
 
         let name = data.name.as_deref().unwrap_or(&service.name);
@@ -91,7 +91,7 @@ impl ServiceRepo for PgServiceRepo {
         Ok(profile)
     }
 
-    async fn destroy(&self, id: &Uuid) -> Result<Service, Error> {
+    async fn destroy(&self, id: &Uuid) -> Result<Service> {
         let profile = query_file_as!(Service, "sql/services/destroy.sql", &id)
             .fetch_one(&self.pool)
             .await?;
@@ -99,7 +99,7 @@ impl ServiceRepo for PgServiceRepo {
         Ok(profile)
     }
 
-    async fn get_default_profile(&self, id: &Uuid) -> Result<Definition, Error> {
+    async fn get_default_profile(&self, id: &Uuid) -> Result<Definition> {
         let profile = query_file_as!(Definition, "sql/services/get_default_definition.sql", &id)
             .fetch_one(&self.pool)
             .await?;

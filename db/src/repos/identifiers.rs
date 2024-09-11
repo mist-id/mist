@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use common::error::Error;
+use common::Result;
 use sqlx::{query_file_as, PgPool};
 
 use crate::models::identifier::{CreateIdentifier, Identifier};
@@ -7,7 +7,7 @@ use crate::models::identifier::{CreateIdentifier, Identifier};
 #[async_trait]
 #[mockall::automock]
 pub trait IdentifierRepo: Send + Sync {
-    async fn create(&self, data: &CreateIdentifier) -> Result<Identifier, Error>;
+    async fn create(&self, data: &CreateIdentifier) -> Result<Identifier>;
 }
 
 pub struct PgIdentifierRepo {
@@ -22,7 +22,7 @@ impl PgIdentifierRepo {
 
 #[async_trait]
 impl IdentifierRepo for PgIdentifierRepo {
-    async fn create(&self, data: &CreateIdentifier) -> Result<Identifier, Error> {
+    async fn create(&self, data: &CreateIdentifier) -> Result<Identifier> {
         let identifier = query_file_as!(
             Identifier,
             "sql/identifiers/create.sql",

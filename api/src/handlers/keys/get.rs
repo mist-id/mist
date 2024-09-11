@@ -4,7 +4,7 @@ use axum::{
     response::IntoResponse,
     Json,
 };
-use common::error::Error;
+use common::Result;
 use serde::Deserialize;
 use uuid::Uuid;
 
@@ -18,7 +18,7 @@ pub(crate) struct GetPath {
 pub(crate) async fn handler(
     State(state): State<ApiState>,
     Path(path): Path<GetPath>,
-) -> Result<impl IntoResponse, Error> {
+) -> Result<impl IntoResponse> {
     let response = state
         .repos
         .keys
@@ -35,7 +35,6 @@ pub(crate) async fn handler(
 mod tests {
     use std::{future::ready, sync::Arc};
 
-    use anyhow::Result;
     use axum::{
         body::Body,
         http::{self, Request, StatusCode},

@@ -8,8 +8,7 @@ processes:
       postgresql:
         condition: process_healthy
   mist:
-    command: RUST_LOG=tower_http=trace cargo watch -x run -p runner
+    command: MIST_LOG=trace RUST_LOG=tower_http=trace cargo watch -x run -p runner
     depends_on:
       init_postgres:
         condition: process_completed_successfully
-

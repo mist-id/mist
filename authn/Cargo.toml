@@ -6,12 +6,12 @@ publish.workspace = true
 
 [dependencies]
 aes-gcm = "0.10.3"
-anyhow = "1.0.86"
 axum = { version = "0.7.5", features = ["macros"] }
 base64 = "0.22.1"
 chrono = { version = "0.4.38", features = ["serde"] }
 db = { path = "../db" }
 dif-presentation-exchange = "0.2.0"
+eyre = "0.6.12"
 fred = { version = "9.2.1", features = ["i-pubsub"] }
 heck = "0.5.0"
 hex = "0.4.3"
