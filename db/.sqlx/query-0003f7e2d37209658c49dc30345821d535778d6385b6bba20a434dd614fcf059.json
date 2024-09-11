@@ -1,0 +1,54 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "insert into services (name, redirect_url, webhook_url) values ($1, $2, $3) returning *;\n",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "redirect_url",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "webhook_url",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 5,
+        "name": "updated_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "0003f7e2d37209658c49dc30345821d535778d6385b6bba20a434dd614fcf059"
+}
