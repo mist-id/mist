@@ -3,6 +3,7 @@
 
 ![GitHub License](https://img.shields.io/github/license/mist-id/mist)
 ![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-green)
+![CI Status](https://img.shields.io/github/actions/workflow/status/mist-id/mist/ci.yml?label=CI)
 ![Status](https://img.shields.io/badge/status-Proof%20of%20Concept-white)
 
 </div>
