@@ -7,11 +7,13 @@ use db::models::{
 };
 use garde::Validate;
 use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 
 use crate::state::ApiState;
 
-#[derive(Serialize, Deserialize, Validate)]
-pub(crate) struct CreateBody {
+#[derive(Serialize, Deserialize, Validate, ToSchema)]
+#[schema(as = CreateServicePayload)]
+pub(crate) struct Payload {
     #[garde(ascii, length(min = 3, max = 25))]
     name: String,
     #[garde(url)]
@@ -22,17 +24,27 @@ pub(crate) struct CreateBody {
     profile: Value,
 }
 
-pub(crate) async fn handler(
+#[utoipa::path(
+    tags = ["Services"],
+    summary = "Create service",
+    post,
+    path = "",
+    request_body = CreateServicePayload,
+    responses(
+        (status = 201, body = Service)
+    )
+)]
+pub(crate) async fn create_handler(
     State(state): State<ApiState>,
-    WithValidation(body): WithValidation<Json<CreateBody>>,
+    WithValidation(payload): WithValidation<Json<Payload>>,
 ) -> Result<impl IntoResponse> {
     let service = state
         .repos
         .services
         .create(&CreateService::new(
-            body.name.clone(),
-            body.redirect_url.clone(),
-            body.webhook_url.clone(),
+            payload.name.clone(),
+            payload.redirect_url.clone(),
+            payload.webhook_url.clone(),
         ))
         .await?;
 
@@ -41,7 +53,7 @@ pub(crate) async fn handler(
         .definitions
         .create(&CreateDefinition::new(
             "default",
-            body.profile.clone(),
+            payload.profile.clone(),
             true,
             service.id,
         ))

@@ -1,0 +1,630 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Mist",
+    "description": "",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    },
+    "version": "latest"
+  },
+  "paths": {
+    "/keys/services/{service_id}/keys": {
+      "get": {
+        "tags": [
+          "Keys"
+        ],
+        "summary": "List keys",
+        "operationId": "list_handler",
+        "parameters": [
+          {
+            "name": "service_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "is_active",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "format": "int32",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Key"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Keys"
+        ],
+        "summary": "Create key",
+        "operationId": "create_handler",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateKeyPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Key"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/keys/services/{service_id}/keys/preferred": {
+      "get": {
+        "tags": [
+          "Keys"
+        ],
+        "summary": "Get preferred key",
+        "operationId": "preferred_handler",
+        "parameters": [
+          {
+            "name": "service_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/KeyKind"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Key"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/keys/{id}": {
+      "get": {
+        "tags": [
+          "Keys"
+        ],
+        "summary": "Get key",
+        "operationId": "get_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Key"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": ""
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Keys"
+        ],
+        "summary": "Update key",
+        "operationId": "update_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateKeyPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Key"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Keys"
+        ],
+        "summary": "Delete key",
+        "operationId": "destroy_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Key"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/services": {
+      "get": {
+        "tags": [
+          "Services"
+        ],
+        "summary": "List services",
+        "operationId": "list_handler",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "format": "int32",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "format": "int32",
+              "minimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Service"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Services"
+        ],
+        "summary": "Create service",
+        "operationId": "create_handler",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateServicePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Service"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/services/{id}": {
+      "get": {
+        "tags": [
+          "Services"
+        ],
+        "summary": "Get service",
+        "operationId": "get_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Service"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": ""
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Services"
+        ],
+        "summary": "Update service",
+        "operationId": "update_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateServicePayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Service"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Services"
+        ],
+        "summary": "Delete service",
+        "operationId": "destroy_handler",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Service"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": ""
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateKeyPayload": {
+        "type": "object",
+        "required": [
+          "kind",
+          "key"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/KeyKind"
+          },
+          "priority": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "CreateServicePayload": {
+        "type": "object",
+        "required": [
+          "name",
+          "redirect_url",
+          "webhook_url",
+          "profile"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "profile": {},
+          "redirect_url": {
+            "type": "string"
+          },
+          "webhook_url": {
+            "type": "string"
+          }
+        }
+      },
+      "Key": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "priority",
+          "is_active",
+          "service_id",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/KeyKind"
+          },
+          "priority": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "service_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "KeyKind": {
+        "type": "string",
+        "enum": [
+          "token"
+        ]
+      },
+      "Service": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "redirect_url",
+          "webhook_url",
+          "created_at",
+          "updated_at"
+        ],
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "redirect_url": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "webhook_url": {
+            "type": "string"
+          }
+        }
+      },
+      "UpdateKeyPayload": {
+        "type": "object",
+        "properties": {
+          "active": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        }
+      },
+      "UpdateServicePayload": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "redirect_url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "webhook_url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Services"
+    },
+    {
+      "name": "Keys"
+    }
+  ]
+}

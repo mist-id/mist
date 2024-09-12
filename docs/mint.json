@@ -18,7 +18,8 @@
   "tabs": [
     {
       "name": "API Reference",
-      "url": "api-reference"
+      "openapi": "/api/openapi.json",
+      "url": "api"
     }
   ],
   "anchors": [
@@ -41,9 +42,7 @@
   "navigation": [
     {
       "group": "Get Started",
-      "pages": [
-        "introduction"
-      ]
+      "pages": ["introduction"]
     },
     {
       "group": "Development",

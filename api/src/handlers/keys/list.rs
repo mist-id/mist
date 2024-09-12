@@ -5,26 +5,37 @@ use axum::{
 };
 use common::Result;
 use serde::{Deserialize, Serialize};
+use utoipa::IntoParams;
 use uuid::Uuid;
 
 use crate::state::ApiState;
 
-#[derive(Serialize, Deserialize)]
-pub(crate) struct ListPath {
+#[derive(Serialize, Deserialize, IntoParams)]
+pub(crate) struct PathParams {
     service_id: Uuid,
 }
 
-#[derive(Deserialize)]
-pub(crate) struct ListQuery {
+#[derive(Deserialize, IntoParams)]
+pub(crate) struct QueryParams {
     pub is_active: Option<bool>,
     pub page: Option<u32>,
     pub limit: Option<u32>,
 }
 
-pub(crate) async fn handler(
+#[utoipa::path(
+    tags = ["Keys"],
+    summary = "List keys",
+    get,
+    path = "/services/{service_id}/keys",
+    params(PathParams, QueryParams),
+    responses(
+        (status = 200, body = Vec<Key>)
+    )
+)]
+pub(crate) async fn list_handler(
     State(state): State<ApiState>,
-    Path(path): Path<ListPath>,
-    Query(query): Query<ListQuery>,
+    Path(path): Path<PathParams>,
+    Query(query): Query<QueryParams>,
 ) -> Result<impl IntoResponse> {
     let limit = query.limit.unwrap_or(10);
     let offset = (query.page.unwrap_or(1) - 1) * limit;

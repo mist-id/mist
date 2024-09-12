@@ -23,4 +23,5 @@ sqlx = { version = "0.8.2", features = [
     "uuid",
     "chrono",
 ] }
+utoipa = { version = "5.0.0-beta.0", features = ["chrono", "uuid"] }
 uuid = { version = "1.10.0", features = ["serde"] }

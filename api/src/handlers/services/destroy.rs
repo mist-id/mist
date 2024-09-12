@@ -5,22 +5,34 @@ use axum::{
 };
 use common::Result;
 use serde::Deserialize;
+use utoipa::IntoParams;
 use uuid::Uuid;
 
 use crate::state::ApiState;
 
-#[derive(Deserialize)]
-pub(crate) struct DestroyPath {
+#[derive(Deserialize, IntoParams)]
+pub(crate) struct PathParams {
     id: Uuid,
 }
 
-pub(crate) async fn handler(
+#[utoipa::path(
+    tags = ["Services"],
+    summary = "Delete service",
+    delete,
+    path = "/{id}",
+    params(PathParams),
+    responses(
+        (status = 200, body = Service),
+        (status = 400)
+    )
+)]
+pub(crate) async fn destroy_handler(
     State(state): State<ApiState>,
-    Path(path): Path<DestroyPath>,
+    Path(path): Path<PathParams>,
 ) -> Result<impl IntoResponse> {
-    let response = Json(state.repos.services.destroy(&path.id).await?);
+    let service = state.repos.services.destroy(&path.id).await?;
 
-    Ok(response)
+    Ok(Json(service))
 }
 
 #[cfg(test)]

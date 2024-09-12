@@ -8,17 +8,19 @@ use common::Result;
 use db::models::service::UpdateService;
 use garde::Validate;
 use serde::{Deserialize, Serialize};
+use utoipa::{IntoParams, ToSchema};
 use uuid::Uuid;
 
 use crate::state::ApiState;
 
-#[derive(Deserialize)]
-pub(crate) struct UpdatePath {
+#[derive(Deserialize, IntoParams)]
+pub(crate) struct PathParams {
     id: Uuid,
 }
 
-#[derive(Serialize, Deserialize, Validate)]
-pub(crate) struct UpdateBody {
+#[derive(Serialize, Deserialize, Validate, ToSchema)]
+#[schema(as = UpdateServicePayload)]
+pub(crate) struct Payload {
     #[garde(ascii, length(min = 3, max = 25))]
     name: Option<String>,
     #[garde(url)]
@@ -27,27 +29,37 @@ pub(crate) struct UpdateBody {
     webhook_url: Option<String>,
 }
 
-pub(crate) async fn handler(
+#[utoipa::path(
+    tags = ["Services"],
+    summary = "Update service",
+    put,
+    path = "/{id}",
+    params(PathParams),
+    request_body = UpdateServicePayload,
+    responses(
+        (status = 200, body = Service),
+        (status = 400)
+    )
+)]
+pub(crate) async fn update_handler(
     State(state): State<ApiState>,
-    Path(path): Path<UpdatePath>,
-    WithValidation(body): WithValidation<Json<UpdateBody>>,
+    Path(path): Path<PathParams>,
+    WithValidation(payload): WithValidation<Json<Payload>>,
 ) -> Result<impl IntoResponse> {
-    let response = Json(
-        state
-            .repos
-            .services
-            .update(
-                &path.id,
-                &UpdateService::new(
-                    body.name.clone(),
-                    body.redirect_url.clone(),
-                    body.webhook_url.clone(),
-                ),
-            )
-            .await?,
-    );
+    let service = state
+        .repos
+        .services
+        .update(
+            &path.id,
+            &UpdateService::new(
+                payload.name.clone(),
+                payload.redirect_url.clone(),
+                payload.webhook_url.clone(),
+            ),
+        )
+        .await?;
 
-    Ok(response)
+    Ok(Json(service))
 }
 
 #[cfg(test)]

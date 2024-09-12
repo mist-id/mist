@@ -9,17 +9,19 @@ use common::Result;
 use db::models::key::{CreateKey, KeyKind};
 use garde::Validate;
 use serde::{Deserialize, Serialize};
+use utoipa::{IntoParams, ToSchema};
 use uuid::Uuid;
 
 use crate::state::ApiState;
 
-#[derive(Serialize, Deserialize)]
-pub(crate) struct CreatePath {
+#[derive(Serialize, Deserialize, IntoParams)]
+pub(crate) struct PathParams {
     service_id: Uuid,
 }
 
-#[derive(Serialize, Deserialize, Validate)]
-pub(crate) struct CreateBody {
+#[derive(Serialize, Deserialize, Validate, ToSchema)]
+#[schema(as = CreateKeyPayload)]
+pub(crate) struct Payload {
     #[garde(skip)]
     kind: KeyKind,
     #[serde(rename = "key")]
@@ -29,10 +31,20 @@ pub(crate) struct CreateBody {
     priority: Option<i32>,
 }
 
-pub(crate) async fn handler(
+#[utoipa::path(
+    tags = ["Keys"],
+    summary = "Create key",
+    post,
+    path = "/services/{service_id}/keys",
+    request_body = CreateKeyPayload,
+    responses(
+        (status = 201, body = Key)
+    )
+)]
+pub(crate) async fn create_handler(
     State(state): State<ApiState>,
-    Path(path): Path<CreatePath>,
-    WithValidation(body): WithValidation<Json<CreateBody>>,
+    Path(path): Path<PathParams>,
+    WithValidation(payload): WithValidation<Json<Payload>>,
 ) -> Result<impl IntoResponse> {
     let key = state
         .repos
@@ -40,9 +52,9 @@ pub(crate) async fn handler(
         .create(
             &state.env.master_key,
             &CreateKey::new(
-                body.kind.clone(),
-                body.value.clone(),
-                body.priority.unwrap_or(1),
+                payload.kind.clone(),
+                payload.value.clone(),
+                payload.priority.unwrap_or(1),
                 path.service_id,
             ),
         )
