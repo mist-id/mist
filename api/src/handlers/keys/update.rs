@@ -44,7 +44,12 @@ pub(crate) async fn update_handler(
     let key = state
         .repos
         .keys
-        .update(&path.id, &UpdateKey::new(payload.is_active))
+        .update(
+            &path.id,
+            &UpdateKey::builder()
+                .maybe_is_active(payload.is_active)
+                .build(),
+        )
         .await?;
 
     Ok((StatusCode::OK, Json(key)))
@@ -77,7 +82,7 @@ mod tests {
         let mut keys = MockKeyRepo::new();
 
         keys.expect_update()
-            .with(eq(id), eq(UpdateKey::new(Some(true))))
+            .with(eq(id), eq(UpdateKey::builder().is_active(true).build()))
             .once()
             .returning(|_, _| Box::pin(ready(Ok(Key::default()))));
 

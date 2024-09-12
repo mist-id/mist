@@ -1,3 +1,4 @@
+use bon::Builder;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::prelude::*;
@@ -14,22 +15,22 @@ pub struct Service {
     pub updated_at: DateTime<Utc>,
 }
 
-#[derive(Debug, PartialEq, derive_new::new)]
+#[derive(Debug, PartialEq, Builder)]
 pub struct CreateService {
-    #[new(into)]
+    #[builder(into)]
     pub name: String,
-    #[new(into)]
+    #[builder(into)]
     pub redirect_url: String,
-    #[new(into)]
+    #[builder(into)]
     pub webhook_url: String,
 }
 
-#[derive(Debug, PartialEq, derive_new::new)]
+#[derive(Debug, PartialEq, Builder)]
 pub struct UpdateService {
-    #[new(into)]
+    #[builder(into)]
     pub name: Option<String>,
-    #[new(into)]
+    #[builder(into)]
     pub redirect_url: Option<String>,
-    #[new(into)]
+    #[builder(into)]
     pub webhook_url: Option<String>,
 }

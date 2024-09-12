@@ -7,9 +7,9 @@ publish.workspace = true
 [dependencies]
 aes-gcm = { version = "0.10.3", features = ["std"] }
 async-trait = "0.1.82"
+bon = "2.2.1"
 chrono = { version = "0.4.38", features = ["serde"] }
 common = { path = "../common" }
-derive-new = "0.7.0"
 eyre = "0.6.12"
 hex = "0.4.3"
 mockall = "0.13.0"

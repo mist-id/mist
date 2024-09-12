@@ -56,19 +56,23 @@ async fn handle_registration(
     state
         .repos
         .users
-        .create(&CreateUser::new(
-            auth_session.user_id,
-            auth_session.service_id,
-        ))
+        .create(
+            &CreateUser::builder()
+                .id(auth_session.user_id)
+                .service_id(auth_session.service_id)
+                .build(),
+        )
         .await?;
 
     state
         .repos
         .identifiers
-        .create(&CreateIdentifier::new(
-            body.data.identifier.clone(),
-            auth_session.user_id,
-        ))
+        .create(
+            &CreateIdentifier::builder()
+                .value(body.data.identifier.clone())
+                .user_id(auth_session.user_id)
+                .build(),
+        )
         .await?;
 
     // Complete the registration process.

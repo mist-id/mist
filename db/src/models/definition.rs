@@ -1,3 +1,4 @@
+use bon::Builder;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::{prelude::*, types::Json};
@@ -25,12 +26,11 @@ pub struct Field {
     pub required: bool,
 }
 
-#[derive(Debug, PartialEq, derive_new::new)]
+#[derive(Builder, Debug, PartialEq)]
 pub struct CreateDefinition {
-    #[new(into)]
+    #[builder(into)]
     pub name: String,
     pub value: Value,
     pub is_default: bool,
-    #[new(into)]
     pub service_id: Uuid,
 }

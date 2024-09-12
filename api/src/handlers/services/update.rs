@@ -51,11 +51,11 @@ pub(crate) async fn update_handler(
         .services
         .update(
             &path.id,
-            &UpdateService::new(
-                payload.name.clone(),
-                payload.redirect_url.clone(),
-                payload.webhook_url.clone(),
-            ),
+            &UpdateService::builder()
+                .maybe_name(payload.name.clone())
+                .maybe_redirect_url(payload.redirect_url.clone())
+                .maybe_webhook_url(payload.webhook_url.clone())
+                .build(),
         )
         .await?;
 
@@ -92,7 +92,7 @@ mod tests {
             .expect_update()
             .with(
                 eq(id),
-                eq(UpdateService::new(Some("ACME".into()), None, None)),
+                eq(UpdateService::builder().maybe_name("ACME".into()).build()),
             )
             .once()
             .returning(|_, _| Box::pin(ready(Ok(Service::default()))));

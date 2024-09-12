@@ -1,3 +1,4 @@
+use bon::Builder;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::prelude::*;
@@ -25,16 +26,16 @@ pub enum KeyKind {
     Token,
 }
 
-#[derive(Debug, PartialEq, derive_new::new)]
+#[derive(Builder, Debug, PartialEq)]
 pub struct CreateKey {
     pub kind: KeyKind,
-    #[new(into)]
+    #[builder(into)]
     pub value: String,
     pub priority: i32,
     pub service_id: Uuid,
 }
 
-#[derive(Debug, PartialEq, derive_new::new)]
+#[derive(Builder, Debug, PartialEq)]
 pub struct UpdateKey {
     pub is_active: Option<bool>,
 }

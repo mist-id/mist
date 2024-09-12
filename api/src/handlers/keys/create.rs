@@ -51,12 +51,12 @@ pub(crate) async fn create_handler(
         .keys
         .create(
             &state.env.master_key,
-            &CreateKey::new(
-                payload.kind.clone(),
-                payload.value.clone(),
-                payload.priority.unwrap_or(1),
-                path.service_id,
-            ),
+            &CreateKey::builder()
+                .kind(payload.kind.clone())
+                .value(payload.value.clone())
+                .priority(payload.priority.unwrap_or(1))
+                .service_id(path.service_id)
+                .build(),
         )
         .await?;
 
@@ -94,7 +94,12 @@ mod tests {
         keys.expect_create()
             .with(
                 eq(master_key.clone()),
-                eq(CreateKey::new(KeyKind::Token, key, 1, service_id)),
+                eq(CreateKey::builder()
+                    .kind(KeyKind::Token)
+                    .value(key)
+                    .priority(1)
+                    .service_id(service_id)
+                    .build()),
             )
             .once()
             .returning(|_, _| Box::pin(ready(Ok(Key::default()))));
