@@ -1,3 +1,4 @@
+use bon::Builder;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::prelude::*;
@@ -12,10 +13,10 @@ pub struct Identifier {
     pub updated_at: DateTime<Utc>,
 }
 
-#[derive(derive_new::new)]
+#[derive(Builder)]
 pub struct CreateIdentifier {
-    #[new(into)]
+    #[builder(into)]
     pub value: String,
-    #[new(into)]
+    #[builder(into)]
     pub user_id: Uuid,
 }

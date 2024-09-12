@@ -41,22 +41,26 @@ pub(crate) async fn create_handler(
     let service = state
         .repos
         .services
-        .create(&CreateService::new(
-            payload.name.clone(),
-            payload.redirect_url.clone(),
-            payload.webhook_url.clone(),
-        ))
+        .create(
+            &CreateService::builder()
+                .name(&payload.name)
+                .redirect_url(&payload.redirect_url)
+                .webhook_url(&payload.webhook_url)
+                .build(),
+        )
         .await?;
 
     state
         .repos
         .definitions
-        .create(&CreateDefinition::new(
-            "default",
-            payload.profile.clone(),
-            true,
-            service.id,
-        ))
+        .create(
+            &CreateDefinition::builder()
+                .name("default")
+                .value(payload.profile.clone())
+                .is_default(true)
+                .service_id(service.id)
+                .build(),
+        )
         .await?;
 
     Ok((StatusCode::CREATED, Json(service)))
@@ -89,11 +93,11 @@ mod tests {
 
         services
             .expect_create()
-            .with(eq(CreateService::new(
-                "ACME",
-                "https://ac.me",
-                "https://ac.me/hooks",
-            )))
+            .with(eq(CreateService::builder()
+                .name("ACME")
+                .redirect_url("https://ac.me")
+                .webhook_url("https://ac.me/hooks")
+                .build()))
             .once()
             .returning(move |_| {
                 Box::pin(ready(Ok(Service {
@@ -104,12 +108,12 @@ mod tests {
 
         definitions
             .expect_create()
-            .with(eq(CreateDefinition::new(
-                "default",
-                Value::default(),
-                true,
-                service_id,
-            )))
+            .with(eq(CreateDefinition::builder()
+                .name("default")
+                .value(Value::default())
+                .is_default(true)
+                .service_id(service_id)
+                .build()))
             .once()
             .returning(|_| Box::pin(ready(Ok(Definition::default()))));
 
