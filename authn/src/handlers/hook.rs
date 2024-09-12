@@ -19,13 +19,12 @@ pub(crate) async fn handler(
     let session_data = state
         .redis_client
         .get::<String, _>(&format!("{REDIS_AUTH_HOOK_KEY}-{}", body.meta.id))
-        .await?;
-
-    let session_data = serde_json::from_str::<AuthHookSessionData>(&session_data)?;
+        .await
+        .map(|v| serde_json::from_str::<AuthHookSessionData>(&v))??;
 
     if session_data.hook_id != body.meta.id {
         return Err(eyre!("invalid hook id").into());
-    }
+    };
 
     match body.meta.kind {
         WebhookKind::Registration => handle_registration(&state, &session_data, &body).await,

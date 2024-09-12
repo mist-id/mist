@@ -487,10 +487,14 @@
         "required": [
           "name",
           "redirect_url",
+          "logout_url",
           "webhook_url",
           "profile"
         ],
         "properties": {
+          "logout_url": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -555,6 +559,7 @@
           "id",
           "name",
           "redirect_url",
+          "logout_url",
           "webhook_url",
           "created_at",
           "updated_at"
@@ -567,6 +572,9 @@
           "id": {
             "type": "string",
             "format": "uuid"
+          },
+          "logout_url": {
+            "type": "string"
           },
           "name": {
             "type": "string"
@@ -597,6 +605,12 @@
       "UpdateServicePayload": {
         "type": "object",
         "properties": {
+          "logout_url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "name": {
             "type": [
               "string",

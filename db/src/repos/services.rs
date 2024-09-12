@@ -46,6 +46,7 @@ impl ServiceRepo for PgServiceRepo {
             "sql/services/create.sql",
             &data.name,
             &data.redirect_url,
+            &data.logout_url,
             &data.webhook_url
         )
         .fetch_one(&self.pool)
@@ -74,7 +75,11 @@ impl ServiceRepo for PgServiceRepo {
         let service = self.get(id).await?;
 
         let name = data.name.as_deref().unwrap_or(&service.name);
-        let redirect_url = data.webhook_url.as_deref().unwrap_or(&service.redirect_url);
+        let redirect_url = data
+            .redirect_url
+            .as_deref()
+            .unwrap_or(&service.redirect_url);
+        let logout_url = data.logout_url.as_deref().unwrap_or(&service.logout_url);
         let webhook_url = data.webhook_url.as_deref().unwrap_or(&service.webhook_url);
 
         let profile = query_file_as!(
@@ -83,6 +88,7 @@ impl ServiceRepo for PgServiceRepo {
             &id,
             &name,
             &redirect_url,
+            &logout_url,
             &webhook_url
         )
         .fetch_one(&self.pool)

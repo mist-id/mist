@@ -33,19 +33,17 @@ cp .env.example .env
 just dev
 ```
 
-5. **Create a tenant for users to sign up to**. This command expects a redirect URL and webhook URL as args.
-   The below assumes that you're also running the example app.
+5. **Create a tenant for users to sign up to**. The created service will use the example service
+   for its authentication flow.
 
 ```bash
-just seed http://localhost:3000/ http://localhost:3000/hook
+just seed
 ```
 
-### Running the example Service
-
-While the Mist itself is ran via devbox, the example app needs to be ran separately.
+### Running the example service
 
 ```bash
-cd example/ && cargo run
+just example
 ```
 
 ### Testing
