@@ -19,6 +19,8 @@ sqlx = "0.8.2"
 tokio = { version = "1.40.0", features = ["full"] }
 tracing = "0.1.40"
 uuid = { version = "1.10.0", features = ["v4"] }
+utoipa = { version = "5.0.0-beta.0", features = ["axum_extras"] }
+utoipa-swagger-ui = { version = "7.1.1-beta.0", features = ["axum"] }
 
 [dev-dependencies]
 secstr = "0.5.1"

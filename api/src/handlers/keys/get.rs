@@ -6,18 +6,30 @@ use axum::{
 };
 use common::Result;
 use serde::Deserialize;
+use utoipa::IntoParams;
 use uuid::Uuid;
 
 use crate::state::ApiState;
 
-#[derive(Deserialize)]
-pub(crate) struct GetPath {
+#[derive(Deserialize, IntoParams)]
+pub(crate) struct PathParams {
     id: Uuid,
 }
 
-pub(crate) async fn handler(
+#[utoipa::path(
+    tags = ["Keys"],
+    summary = "Get key",
+    get,
+    path = "/{id}",
+    params(PathParams),
+    responses(
+        (status = 200, body = Key),
+        (status = 400)
+    )
+)]
+pub(crate) async fn get_handler(
     State(state): State<ApiState>,
-    Path(path): Path<GetPath>,
+    Path(path): Path<PathParams>,
 ) -> Result<impl IntoResponse> {
     let response = state
         .repos

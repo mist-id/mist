@@ -58,10 +58,6 @@ pub(crate) async fn handler(
 
     let service = state.repos.services.get(&session_data.service_id).await?;
 
-    let Some(service) = service else {
-        return Ok(StatusCode::NOT_FOUND);
-    };
-
     let service_key = state
         .repos
         .keys

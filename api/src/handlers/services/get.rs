@@ -1,34 +1,38 @@
 use axum::{
     extract::{Path, State},
-    http::StatusCode,
     response::IntoResponse,
     Json,
 };
 use common::Result;
 use serde::Deserialize;
+use utoipa::IntoParams;
 use uuid::Uuid;
 
 use crate::state::ApiState;
 
-#[derive(Deserialize)]
-pub(crate) struct GetPath {
+#[derive(Deserialize, IntoParams)]
+pub(crate) struct PathParams {
     id: Uuid,
 }
 
-pub(crate) async fn handler(
+#[utoipa::path(
+    tags = ["Services"],
+    summary = "Get service",
+    get,
+    path = "/{id}",
+    params(PathParams),
+    responses(
+        (status = 200, body = Service),
+        (status = 400)
+    )
+)]
+pub(crate) async fn get_handler(
     State(state): State<ApiState>,
-    Path(path): Path<GetPath>,
+    Path(path): Path<PathParams>,
 ) -> Result<impl IntoResponse> {
-    let response = state
-        .repos
-        .services
-        .get(&path.id)
-        .await?
-        .map_or(StatusCode::NOT_FOUND.into_response(), |r| {
-            Json(r).into_response()
-        });
+    let response = state.repos.services.get(&path.id).await?;
 
-    Ok(response)
+    Ok(Json(response))
 }
 
 #[cfg(test)]
@@ -62,7 +66,7 @@ mod tests {
             .once()
             .with(eq(id))
             .once()
-            .returning(|_| Box::pin(ready(Ok(Some(Service::default())))));
+            .returning(|_| Box::pin(ready(Ok(Service::default()))));
 
         let app = router().with_state(ApiState {
             env: Environment::default(),

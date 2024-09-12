@@ -7,30 +7,44 @@ use axum::{
 use common::Result;
 use db::models::key::UpdateKey;
 use serde::{Deserialize, Serialize};
+use utoipa::{IntoParams, ToSchema};
 use uuid::Uuid;
 
 use crate::state::ApiState;
 
-#[derive(Serialize, Deserialize)]
-pub(crate) struct UpdatePath {
+#[derive(Serialize, Deserialize, IntoParams)]
+pub(crate) struct PathParams {
     id: Uuid,
 }
 
-#[derive(Serialize, Deserialize)]
-pub(crate) struct UpdateBody {
+#[derive(Serialize, Deserialize, ToSchema)]
+#[schema(as = UpdateKeyPayload)]
+pub(crate) struct Payload {
     #[serde(rename = "active")]
     is_active: Option<bool>,
 }
 
-pub(crate) async fn handler(
+#[utoipa::path(
+    tags = ["Keys"],
+    summary = "Update key",
+    put,
+    path = "/{id}",
+    params(PathParams),
+    request_body = UpdateKeyPayload,
+    responses(
+        (status = 200, body = Key),
+        (status = 400)
+    )
+)]
+pub(crate) async fn update_handler(
     State(state): State<ApiState>,
-    Path(path): Path<UpdatePath>,
-    Json(body): Json<UpdateBody>,
+    Path(path): Path<PathParams>,
+    Json(payload): Json<Payload>,
 ) -> Result<impl IntoResponse> {
     let key = state
         .repos
         .keys
-        .update(&path.id, &UpdateKey::new(body.is_active))
+        .update(&path.id, &UpdateKey::new(payload.is_active))
         .await?;
 
     Ok((StatusCode::OK, Json(key)))

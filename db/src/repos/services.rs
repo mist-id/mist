@@ -13,7 +13,7 @@ use crate::models::{
 pub trait ServiceRepo: Send + Sync {
     async fn list(&self, limit: i64, offset: i64) -> Result<Vec<Service>>;
     async fn create(&self, data: &CreateService) -> Result<Service>;
-    async fn get(&self, id: &Uuid) -> Result<Option<Service>>;
+    async fn get(&self, id: &Uuid) -> Result<Service>;
     async fn get_by_name(&self, name: &str) -> Result<Option<Service>>;
     async fn update(&self, id: &Uuid, date: &UpdateService) -> Result<Service>;
     async fn destroy(&self, id: &Uuid) -> Result<Service>;
@@ -54,9 +54,9 @@ impl ServiceRepo for PgServiceRepo {
         Ok(service)
     }
 
-    async fn get(&self, id: &Uuid) -> Result<Option<Service>> {
+    async fn get(&self, id: &Uuid) -> Result<Service> {
         let profile = query_file_as!(Service, "sql/services/get.sql", &id)
-            .fetch_optional(&self.pool)
+            .fetch_one(&self.pool)
             .await?;
 
         Ok(profile)
@@ -71,7 +71,7 @@ impl ServiceRepo for PgServiceRepo {
     }
 
     async fn update(&self, id: &Uuid, data: &UpdateService) -> Result<Service> {
-        let service = self.get(id).await?.ok_or(sqlx::Error::RowNotFound)?;
+        let service = self.get(id).await?;
 
         let name = data.name.as_deref().unwrap_or(&service.name);
         let redirect_url = data.webhook_url.as_deref().unwrap_or(&service.redirect_url);

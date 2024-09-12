@@ -6,24 +6,36 @@ use axum::{
 use common::Result;
 use db::models::key::KeyKind;
 use serde::{Deserialize, Serialize};
+use utoipa::IntoParams;
 use uuid::Uuid;
 
 use crate::state::ApiState;
 
-#[derive(Serialize, Deserialize)]
-pub(crate) struct PreferredPath {
+#[derive(Serialize, Deserialize, IntoParams)]
+pub(crate) struct PathParams {
     service_id: Uuid,
 }
 
-#[derive(Serialize, Deserialize)]
-pub(crate) struct PreferredQuery {
+#[derive(Serialize, Deserialize, IntoParams)]
+pub(crate) struct QueryParams {
     kind: KeyKind,
 }
 
-pub(crate) async fn handler(
+#[utoipa::path(
+    tags = ["Keys"],
+    summary = "Get preferred key",
+    get,
+    path = "/services/{service_id}/keys/preferred",
+    params(PathParams, QueryParams),
+    responses(
+        (status = 200, body = Key),
+        (status = 400)
+    )
+)]
+pub(crate) async fn preferred_handler(
     State(state): State<ApiState>,
-    Path(path): Path<PreferredPath>,
-    Query(query): Query<PreferredQuery>,
+    Path(path): Path<PathParams>,
+    Query(query): Query<QueryParams>,
 ) -> Result<impl IntoResponse> {
     let response = Json(
         state
