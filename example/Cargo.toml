@@ -5,8 +5,9 @@ edition = "2021"
 publish = false
 
 [dependencies]
-axum = "0.7.5"
+axum = { version = "0.7.5", features = ["macros"] }
 axum-extra = { version = "0.9.3", features = ["cookie"] }
+eyre = "0.6.12"
 maud = { version = "0.26.0", features = ["axum"] }
 reqwest = { version = "0.12.7", features = ["json"] }
 serde_json = "1.0.128"

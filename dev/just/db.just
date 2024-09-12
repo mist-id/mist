@@ -14,6 +14,10 @@ migrate:
   @ dotenvx run -- sqlx migrate run --source {{justfile_directory()}}/db/migrations
   @ echo "👻 Migrations complete!" | gum format
 
+# Export query matadata
+prepare:
+  @ cd {{justfile_directory()}}/db && cargo sqlx prepare
+
 # Dump the schema to `db/schema.sql`
 dump:
   @ pg_dump --dbname=mist --schema-only --file {{justfile_directory()}}/db/schema.sql

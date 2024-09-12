@@ -10,6 +10,7 @@ pub struct Service {
     pub id: Uuid,
     pub name: String,
     pub redirect_url: String,
+    pub logout_url: String,
     pub webhook_url: String,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
@@ -22,6 +23,8 @@ pub struct CreateService {
     #[builder(into)]
     pub redirect_url: String,
     #[builder(into)]
+    pub logout_url: String,
+    #[builder(into)]
     pub webhook_url: String,
 }
 
@@ -31,6 +34,8 @@ pub struct UpdateService {
     pub name: Option<String>,
     #[builder(into)]
     pub redirect_url: Option<String>,
+    #[builder(into)]
+    pub logout_url: Option<String>,
     #[builder(into)]
     pub webhook_url: Option<String>,
 }

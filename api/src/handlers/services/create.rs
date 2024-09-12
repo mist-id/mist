@@ -19,6 +19,8 @@ pub(crate) struct Payload {
     #[garde(url)]
     redirect_url: String,
     #[garde(url)]
+    logout_url: String,
+    #[garde(url)]
     webhook_url: String,
     #[garde(skip)]
     profile: Value,
@@ -45,6 +47,7 @@ pub(crate) async fn create_handler(
             &CreateService::builder()
                 .name(&payload.name)
                 .redirect_url(&payload.redirect_url)
+                .logout_url(&payload.logout_url)
                 .webhook_url(&payload.webhook_url)
                 .build(),
         )
@@ -96,6 +99,7 @@ mod tests {
             .with(eq(CreateService::builder()
                 .name("ACME")
                 .redirect_url("https://ac.me")
+                .logout_url("https://ac.me")
                 .webhook_url("https://ac.me/hooks")
                 .build()))
             .once()
@@ -137,6 +141,7 @@ mod tests {
                         {
                             "name": "ACME",
                             "redirect_url": "https://ac.me",
+                            "logout_url": "https://ac.me",
                             "webhook_url": "https://ac.me/hooks",
                             "profile": { "fields": [] }
                         }

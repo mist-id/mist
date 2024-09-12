@@ -49,9 +49,8 @@ pub(crate) async fn handler(
     let session_data = state
         .redis_client
         .get::<String, _>(&format!("{REDIS_AUTH_KEY}-{received_session_id}"))
-        .await?;
-
-    let session_data = serde_json::from_str::<AuthSessionData>(&session_data)?;
+        .await
+        .map(|v| serde_json::from_str::<AuthSessionData>(&v))??;
 
     // Get the services' token key for verifying the state and nonce.
     // --------------------------------------------------------------

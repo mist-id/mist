@@ -133,6 +133,7 @@ CREATE TABLE public.services (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     name text NOT NULL,
     redirect_url text NOT NULL,
+    logout_url text NOT NULL,
     webhook_url text NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL

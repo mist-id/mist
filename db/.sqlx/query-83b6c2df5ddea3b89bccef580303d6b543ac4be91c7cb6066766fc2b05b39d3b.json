@@ -20,16 +20,21 @@
       },
       {
         "ordinal": 3,
-        "name": "webhook_url",
+        "name": "logout_url",
         "type_info": "Text"
       },
       {
         "ordinal": 4,
+        "name": "webhook_url",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
         "name": "created_at",
         "type_info": "Timestamptz"
       },
       {
-        "ordinal": 5,
+        "ordinal": 6,
         "name": "updated_at",
         "type_info": "Timestamptz"
       }
@@ -40,6 +45,7 @@
       ]
     },
     "nullable": [
+      false,
       false,
       false,
       false,

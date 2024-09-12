@@ -1,4 +1,7 @@
-use axum::{extract::State, response::IntoResponse};
+use axum::{
+    extract::State,
+    response::{IntoResponse, Redirect},
+};
 use common::Result;
 use eyre::OptionExt;
 use fred::prelude::*;
@@ -18,19 +21,19 @@ pub(crate) async fn handler(
 }
 
 async fn handle_request(cookies: Cookies, state: AuthnState) -> Result<impl IntoResponse> {
-    let cookie = cookies.get(COOKIE_KEY).ok_or_eyre("no cookie")?;
+    let mut cookie = cookies.get(COOKIE_KEY).ok_or_eyre("no cookie")?;
+    let key = format!("{REDIS_AUTH_KEY}-{}", cookie.value());
+
     let session = state
         .redis_client
-        .get::<String, _>(&format!("{REDIS_AUTH_KEY}-{}", cookie.value()))
+        .get::<String, _>(&key)
         .await
         .map(|v| serde_json::from_str::<AuthSessionData>(&v))??;
 
-    let user = state
-        .repos
-        .users
-        .get(&session.user_id)
-        .await?
-        .ok_or_eyre("can't find user")?;
+    let service = state.repos.services.get(&session.service_id).await?;
 
-    Ok(serde_json::to_string(&user)?)
+    cookie.make_removal();
+    state.redis_client.del(&key).await?;
+
+    Ok(Redirect::to(&service.logout_url))
 }

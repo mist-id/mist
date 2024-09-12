@@ -26,6 +26,8 @@ pub(crate) struct Payload {
     #[garde(url)]
     redirect_url: Option<String>,
     #[garde(url)]
+    logout_url: Option<String>,
+    #[garde(url)]
     webhook_url: Option<String>,
 }
 
@@ -54,6 +56,7 @@ pub(crate) async fn update_handler(
             &UpdateService::builder()
                 .maybe_name(payload.name.clone())
                 .maybe_redirect_url(payload.redirect_url.clone())
+                .maybe_logout_url(payload.logout_url.clone())
                 .maybe_webhook_url(payload.webhook_url.clone())
                 .build(),
         )
