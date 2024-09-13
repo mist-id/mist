@@ -45,7 +45,7 @@ Check out the [roadmap](https://github.com/orgs/mist-id/projects/1) for more inf
 
 ## Demo
 
-There's a [live [demo](https://mist-demo.fly.dev) available to see the authentication flow in action.
+There's a [live demo](https://mist-demo.fly.dev) available to see the authentication flow in action.
 You'll need an SIOP-compliant wallet to authenticate, such as [Sphereon's mobile wallet](https://github.com/Sphereon-Opensource/mobile-wallet).
 
 The source code for the demo is available in the [`demo`](demo) directory.
