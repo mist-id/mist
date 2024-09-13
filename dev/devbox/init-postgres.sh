@@ -1,4 +1,5 @@
 #!/bin/sh
+
 DB=mist
 USER=casper
 

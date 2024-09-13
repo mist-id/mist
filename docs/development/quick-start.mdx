@@ -11,17 +11,17 @@ The only dependency you need to install is [devbox](https://www.jetify.com/devbo
 1. **Clone the repository and navigate to the project directory**.
 
 ```bash
-gh repo clone mist-id/mist && cd mist
+git clone git@github.com:mist-id/mist.git && cd mist
 ```
 
-2. **Start the development environment**. This may take a while the first time as it downloads all dependencies.
+2. **Start the development environment**. This may take a while the first time as it
+   downloads all dependencies.
 
 ```bash
 devbox shell
 ```
 
-3. **Copy over the env config**. Be sure to set `AUTHN_BASE_URL` to your local IP address if you plan
-   on testing the authentication flow with another device.
+3. **Copy over the env config**. Make sure to edit the required values.
 
 ```bash
 cp .env.example .env
@@ -33,23 +33,25 @@ cp .env.example .env
 just dev
 ```
 
-5. **Create a tenant for users to sign up to**. The created service will use the example service
-   for its authentication flow.
+5. **Create a tenant for users to sign up to**. You'll need to provide your local
+   IP address to allow Mist to communicate with the demo service (see below)
 
 ```bash
-just seed
-```
-
-### Running the example service
-
-```bash
-just example
+just seed 10.0.0.125
 ```
 
 ### Testing
 
 To test the authentication flow, you'll need an SIOP-enabled app.
 Any should work, but development has so far been done using [Sphereon Wallet](https://github.com/Sphereon-Opensource/mobile-wallet) ([iOS](https://apps.apple.com/us/app/sphereon-wallet/id1661096796), [Android](https://play.google.com/store/apps/details?id=com.sphereon.ssi.wallet&hl=en_US)).
+
+**You'll also need to run the demo service**. Once again, be sure to edit the required values.
+
+```bash
+cp demo/.env.example demo/.env
+
+just demo
+```
 
 ## What next?
 

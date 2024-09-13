@@ -1,6 +1,6 @@
 [workspace]
 members = ["api", "authn", "common", "db", "runner"]
-exclude = ["example"]
+exclude = ["demo"]
 resolver = "2"
 
 [workspace.package]

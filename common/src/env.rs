@@ -5,7 +5,7 @@ use serde::{Deserialize, Deserializer};
 pub struct Environment {
     #[serde(deserialize_with = "string_to_secstr")]
     pub master_key: SecStr,
-    pub authn_base_url: String,
+    pub authn_url: String,
     #[serde(default = "default_postgres_url")]
     pub postgres_url: String,
     #[serde(default = "default_postgres_pool_size")]
@@ -45,13 +45,13 @@ fn default_resolver_host() -> String {
 impl Default for Environment {
     fn default() -> Self {
         Self {
-            development: Default::default(),
             master_key: SecStr::new(vec![]),
+            authn_url: Default::default(),
             postgres_url: Default::default(),
             postgres_pool_size: Default::default(),
             redis_url: Default::default(),
             resolver_host: Default::default(),
-            authn_base_url: Default::default(),
+            development: Default::default(),
         }
     }
 }

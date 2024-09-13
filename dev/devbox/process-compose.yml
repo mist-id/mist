@@ -1,5 +1,6 @@
 version: "0.5"
 is_strict: true
+
 processes:
   init_postgres:
     namespace: init
@@ -7,8 +8,9 @@ processes:
     depends_on:
       postgresql:
         condition: process_healthy
+
   mist:
-    command: MIST_LOG=trace RUST_LOG=tower_http=trace cargo watch -x run -p runner
+    command: RUST_LOG=tower_http=trace cargo watch -x run -p runner
     depends_on:
       init_postgres:
         condition: process_completed_successfully

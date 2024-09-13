@@ -154,11 +154,10 @@ pub(crate) async fn handler(
     let state_sk = service_key.clone();
     let nonce_sk = service_key.clone();
 
+    let redirect_url = RedirectUrl::new(format!("{}/verify", state.env.authn_url))?;
+
     let (authorize_url, _, _) = oidc_client
-        .set_redirect_uri(RedirectUrl::new(format!(
-            "{}/verify",
-            state.env.authn_base_url
-        ))?)
+        .set_redirect_uri(redirect_url)
         .authorize_url(
             AuthenticationFlow::<CoreResponseType>::Hybrid(vec![
                 CoreResponseType::IdToken,
@@ -198,16 +197,18 @@ pub(crate) async fn handler(
         script {
             (PreEscaped(format!(r#"
                 document.addEventListener("DOMContentLoaded", () => {{
-                    const source = new EventSource("/waiting");
+                    const source = new EventSource("{0}", {{ withCredentials: true }});
 
                     source.onmessage = (event) => {{
                         if (event.data === "ready") {{
-                            window.location.href = "{0}"
+                            window.location.href = "{1}"
                         }}
                     }};
                 }});
-            "#, service.redirect_url)))
+            "#, format!("{}/waiting", state.env.authn_url), service.redirect_url)))
         }
+
+        title { "Sign in with Mist" }
 
         body class="bg-slate-100";
 
