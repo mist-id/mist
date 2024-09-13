@@ -1,0 +1,12 @@
+:80 {
+    handle_path /mist/* {
+        reverse_proxy https://mist.fly.dev {
+            header_up Host {http.reverse_proxy.upstream.hostport}
+            header_up X-Real-IP {remote_host}
+        }
+    }
+
+    handle /* {
+        reverse_proxy localhost:3000
+    }
+}

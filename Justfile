@@ -2,19 +2,19 @@ mod db 'dev/just/db.just'
 mod api 'dev/just/api.just'
 
 # Create an ACME service.
-seed:
+seed local_ip_address:
   curl -X POST -H "Content-Type: application/json" --data-raw \
-    '{ "name": "ACME", "redirect_url": "http://0.0.0.0:3000/", "logout_url": "http://0.0.0.0:3000/", "webhook_url": "http://0.0.0.0:3000/hook", "profile": { "fields": [ { "name": "First name", "required": true } ] } }' \
-    --silent localhost:9001/services | jq --raw-output '.id' \
+    '{ "name": "ACME", "redirect_url": "http://{{local_ip_address}}:3000/", "logout_url": "http://{{local_ip_address}}:3000/", "webhook_url": "http://{{local_ip_address}}:3000/hook", "profile": { "fields": [ { "name": "First name", "required": true } ] } }' \
+    --silent 0.0.0.0:9001/services | jq --raw-output '.id' \
     | xargs -I {} just api post services/{}/keys kind=token key=$(openssl rand -hex 32) --silent
 
 # Start all services
 dev:
   dotenvx run -- devbox services up --process-compose-file {{justfile_directory()}}/dev/devbox/process-compose.yml
 
-# Start the example service
-example:
-  cd {{justfile_directory()}}/example && cargo run
+# Start demo service
+demo:
+  cd {{justfile_directory()}}/demo && dotenvx run -- cargo watch -x run
 
 # Start docs preview
 docs:

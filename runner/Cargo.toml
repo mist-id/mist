@@ -11,7 +11,7 @@ axum = "0.7.5"
 color-eyre = "0.6.3"
 common = { path = "../common" }
 envy = "0.4.2"
-sqlx = { version = "0.8.2", features = ["migrate"] }
+sqlx = { version = "0.8.2", features = ["migrate", "postgres"] }
 tokio = { version = "1.40.0", features = ["rt"] }
 tower-http = { version = "0.5.2", features = ["trace"] }
 tracing = "0.1.40"
