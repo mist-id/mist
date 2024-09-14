@@ -170,6 +170,14 @@ pub(crate) async fn handler(
         .as_ref()
         .ok_or_eyre("could not get public jwk")?;
 
+    // Ensure that the public key is for verification. I _think_ this should be
+    // `verify`, but Sphereon sends `sig`.
+    //
+    // See: https://www.rfc-editor.org/rfc/rfc7517#section-4.3
+    if jwk.public_key_use.as_deref() != Some("sig") {
+        return Err(eyre!("public key is not for verification").into());
+    }
+
     let decoded_id_token = ssi::jwt::decode_verify::<CoreIdTokenClaims>(&body.id_token, jwk)?;
 
     // Verify that the nonce in the ID token matches the one we sent.
