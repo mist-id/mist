@@ -1,6 +1,7 @@
 use std::str::FromStr;
 
 use axum::{extract::State, response::IntoResponse, Form};
+use chrono::Utc;
 use common::Result;
 use db::models::key::KeyKind;
 use eyre::{eyre, OptionExt};
@@ -179,6 +180,11 @@ pub(crate) async fn handler(
     }
 
     let decoded_id_token = ssi::jwt::decode_verify::<CoreIdTokenClaims>(&body.id_token, jwk)?;
+
+    // Make sure the token hasn't expired.
+    if decoded_id_token.expiration() < Utc::now() {
+        return Err(eyre!("token has expired").into());
+    }
 
     // Verify that the nonce in the ID token matches the one we sent.
     // --------------------------------------------------------------
