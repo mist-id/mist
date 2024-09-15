@@ -9,6 +9,9 @@ processes:
       postgresql:
         condition: process_healthy
 
+  docker_compose:
+    command: docker-compose -f dev/docker-compose.yml up
+
   mist:
     command: RUST_LOG=tower_http=trace cargo watch -x run -p runner
     depends_on:
