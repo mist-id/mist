@@ -1,0 +1,10 @@
+services:
+  uni-resolver-web:
+    image: universalresolver/uni-resolver-web:latest
+    ports:
+      - "9050:8080"
+
+  did-jwk-driver:
+    image: transmute/restricted-resolver:latest
+    ports:
+      - "9051:8080"

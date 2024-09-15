@@ -93,7 +93,7 @@ pub(crate) async fn handler(
 
     let document = reqwest::get(format!(
         "{resolver_host}/{did}",
-        resolver_host = &state.env.resolver_host
+        resolver_host = &state.env.resolver_url
     ))
     .await?
     .json::<ResolutionResult>()
@@ -122,7 +122,7 @@ pub(crate) async fn handler(
         VerificationMethod::DIDURL(url) => {
             let other_document = reqwest::get(format!(
                 "{resolver_host}/{url}",
-                resolver_host = &state.env.resolver_host
+                resolver_host = &state.env.resolver_url
             ))
             .await?
             .json::<ResolutionResult>()
