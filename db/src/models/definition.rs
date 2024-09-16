@@ -32,5 +32,4 @@ pub struct CreateDefinition {
     pub name: String,
     pub value: Value,
     pub is_default: bool,
-    pub service_id: Uuid,
 }

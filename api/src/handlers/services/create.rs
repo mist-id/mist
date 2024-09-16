@@ -50,18 +50,10 @@ pub(crate) async fn create_handler(
                 .logout_url(&payload.logout_url)
                 .webhook_url(&payload.webhook_url)
                 .build(),
-        )
-        .await?;
-
-    state
-        .repos
-        .definitions
-        .create(
             &CreateDefinition::builder()
                 .name("default")
                 .value(payload.profile.clone())
                 .is_default(true)
-                .service_id(service.id)
                 .build(),
         )
         .await?;
@@ -76,8 +68,8 @@ mod tests {
     use axum::{body::Body, extract::Request, http};
     use common::env::Environment;
     use db::{
-        models::{definition::Definition, service::Service},
-        repos::{definitions::MockDefinitionRepo, keys::MockKeyRepo, services::MockServiceRepo},
+        models::service::Service,
+        repos::{keys::MockKeyRepo, services::MockServiceRepo},
     };
     use mockall::predicate::*;
     use tower::ServiceExt;
@@ -92,41 +84,35 @@ mod tests {
         let service_id = Uuid::new_v4();
 
         let mut services = MockServiceRepo::new();
-        let mut definitions = MockDefinitionRepo::new();
 
         services
             .expect_create()
-            .with(eq(CreateService::builder()
-                .name("ACME")
-                .redirect_url("https://ac.me")
-                .logout_url("https://ac.me")
-                .webhook_url("https://ac.me/hooks")
-                .build()))
+            .with(
+                eq(CreateService::builder()
+                    .name("ACME")
+                    .redirect_url("https://ac.me")
+                    .logout_url("https://ac.me")
+                    .webhook_url("https://ac.me/hooks")
+                    .build()),
+                eq(CreateDefinition::builder()
+                    .name("default")
+                    .value(Value::default())
+                    .is_default(true)
+                    .build()),
+            )
             .once()
-            .returning(move |_| {
+            .returning(move |_, _| {
                 Box::pin(ready(Ok(Service {
                     id: service_id,
                     ..Default::default()
                 })))
             });
 
-        definitions
-            .expect_create()
-            .with(eq(CreateDefinition::builder()
-                .name("default")
-                .value(Value::default())
-                .is_default(true)
-                .service_id(service_id)
-                .build()))
-            .once()
-            .returning(|_| Box::pin(ready(Ok(Definition::default()))));
-
         let app = router().with_state(ApiState {
             env: Environment::default(),
             repos: Repos {
                 services: Arc::new(services),
                 keys: Arc::new(MockKeyRepo::new()),
-                definitions: Arc::new(definitions),
             },
         });
 

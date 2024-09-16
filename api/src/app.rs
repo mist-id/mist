@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use axum::Router;
 use common::env::Environment;
-use db::repos::{definitions::PgDefinitionRepo, keys::PgKeyRepo, services::PgServiceRepo};
+use db::repos::{keys::PgKeyRepo, services::PgServiceRepo};
 use sqlx::postgres::PgPoolOptions;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
@@ -30,7 +30,6 @@ pub async fn app(env: Environment) -> Router {
     let repos = Repos {
         services: Arc::new(PgServiceRepo::new(postgres.clone())),
         keys: Arc::new(PgKeyRepo::new(postgres.clone())),
-        definitions: Arc::new(PgDefinitionRepo::new(postgres.clone())),
     };
 
     let is_development = env.development;

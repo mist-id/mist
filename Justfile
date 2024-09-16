@@ -5,8 +5,7 @@ mod api 'dev/just/api.just'
 seed local_ip_address:
   curl -X POST -H "Content-Type: application/json" --data-raw \
     '{ "name": "ACME", "redirect_url": "http://{{local_ip_address}}:3000/", "logout_url": "http://{{local_ip_address}}:3000/", "webhook_url": "http://{{local_ip_address}}:3000/hook", "profile": { "fields": [ { "name": "First name", "required": true } ] } }' \
-    --silent 0.0.0.0:9001/services | jq --raw-output '.id' \
-    | xargs -I {} just api post services/{}/keys kind=token key=$(openssl rand -hex 32) --silent
+    {{local_ip_address}}:9001/services
 
 # Start all services
 dev:

@@ -2,13 +2,12 @@ use std::sync::Arc;
 
 use axum::extract::FromRef;
 use common::env::Environment;
-use db::repos::{definitions::DefinitionRepo, keys::KeyRepo, services::ServiceRepo};
+use db::repos::{keys::KeyRepo, services::ServiceRepo};
 
 #[derive(Clone)]
 pub(crate) struct Repos {
     pub(crate) services: Arc<dyn ServiceRepo>,
     pub(crate) keys: Arc<dyn KeyRepo>,
-    pub(crate) definitions: Arc<dyn DefinitionRepo>,
 }
 
 #[derive(Clone)]
