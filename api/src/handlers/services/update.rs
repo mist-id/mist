@@ -76,7 +76,7 @@ mod tests {
     use common::env::Environment;
     use db::{
         models::service::{Service, UpdateService},
-        repos::{definitions::MockDefinitionRepo, keys::MockKeyRepo, services::MockServiceRepo},
+        repos::{keys::MockKeyRepo, services::MockServiceRepo},
     };
     use mockall::predicate::*;
     use tower::ServiceExt;
@@ -105,7 +105,6 @@ mod tests {
             repos: Repos {
                 services: Arc::new(services),
                 keys: Arc::new(MockKeyRepo::new()),
-                definitions: Arc::new(MockDefinitionRepo::new()),
             },
         });
 

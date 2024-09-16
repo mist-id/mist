@@ -4,7 +4,7 @@ use sqlx::{query_file_as, PgPool};
 use uuid::Uuid;
 
 use crate::models::{
-    definition::Definition,
+    definition::{CreateDefinition, Definition},
     service::{CreateService, Service, UpdateService},
 };
 
@@ -12,7 +12,11 @@ use crate::models::{
 #[mockall::automock]
 pub trait ServiceRepo: Send + Sync {
     async fn list(&self, limit: i64, offset: i64) -> Result<Vec<Service>>;
-    async fn create(&self, data: &CreateService) -> Result<Service>;
+    async fn create(
+        &self,
+        service: &CreateService,
+        definition: &CreateDefinition,
+    ) -> Result<Service>;
     async fn get(&self, id: &Uuid) -> Result<Service>;
     async fn get_by_name(&self, name: &str) -> Result<Option<Service>>;
     async fn update(&self, id: &Uuid, date: &UpdateService) -> Result<Service>;
@@ -40,17 +44,36 @@ impl ServiceRepo for PgServiceRepo {
         Ok(profile)
     }
 
-    async fn create(&self, data: &CreateService) -> Result<Service> {
+    async fn create(
+        &self,
+        service: &CreateService,
+        definition: &CreateDefinition,
+    ) -> Result<Service> {
+        let mut tx = self.pool.begin().await?;
+
         let service = query_file_as!(
             Service,
             "sql/services/create.sql",
-            &data.name,
-            &data.redirect_url,
-            &data.logout_url,
-            &data.webhook_url
+            &service.name,
+            &service.redirect_url,
+            &service.logout_url,
+            &service.webhook_url
         )
-        .fetch_one(&self.pool)
+        .fetch_one(&mut *tx)
         .await?;
+
+        query_file_as!(
+            Definition,
+            "sql/definitions/create.sql",
+            service.id,
+            definition.name,
+            serde_json::to_value(&definition.value)?,
+            definition.is_default
+        )
+        .fetch_one(&mut *tx)
+        .await?;
+
+        tx.commit().await?;
 
         Ok(service)
     }
