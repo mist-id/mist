@@ -1,9 +1,5 @@
-use aes_gcm::{
-    aead::{Aead, OsRng},
-    AeadCore, Aes256Gcm, KeyInit,
-};
 use async_trait::async_trait;
-use common::Result;
+use common::{crypto::encrypt_service_key, Result};
 use secstr::SecStr;
 use sqlx::{query_file, query_file_as, PgPool};
 use uuid::Uuid;
@@ -61,13 +57,7 @@ impl KeyRepo for PgKeyRepo {
     }
 
     async fn create(&self, master_key: &SecStr, data: &CreateKey) -> Result<Key> {
-        let master_bytes = hex::decode(master_key.unsecure())?;
-        let key_bytes = data.value.as_bytes();
-
-        let cipher = Aes256Gcm::new(master_bytes.as_slice().into());
-        let nonce = Aes256Gcm::generate_nonce(&mut OsRng);
-        let mut key_encrypted = cipher.encrypt(&nonce, key_bytes)?;
-        key_encrypted.splice(0..0, nonce.iter().cloned());
+        let key_encrypted = encrypt_service_key(master_key, data.value.as_bytes())?;
 
         let mut tx = self.pool.begin().await?;
 
