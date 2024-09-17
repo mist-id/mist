@@ -1073,8 +1073,11 @@ checksum = "337cdbf3f1a0e643b4a7d1a2ffa39d22342fb6ee25739b5cfb997c28b3586422"
 name = "common"
 version = "0.0.0"
 dependencies = [
+ "aes-gcm",
  "axum",
  "eyre",
+ "hex",
+ "rand",
  "secstr",
  "serde",
  "sqlx",
@@ -1470,13 +1473,11 @@ dependencies = [
 name = "db"
 version = "0.0.0"
 dependencies = [
- "aes-gcm",
  "async-trait",
  "bon",
  "chrono",
  "common",
  "eyre",
- "hex",
  "mockall",
  "secstr",
  "serde",
