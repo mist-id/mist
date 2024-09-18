@@ -41,15 +41,13 @@ pub(crate) async fn list_handler(
     let offset = (query.page.unwrap_or(1) - 1) * limit;
     let is_active = query.is_active.unwrap_or(true);
 
-    let response = Json(
-        state
-            .repos
-            .keys
-            .list(&path.service_id, is_active, limit as i64, offset as i64)
-            .await?,
-    );
+    let keys = state
+        .repos
+        .keys
+        .list(&path.service_id, is_active, limit as i64, offset as i64)
+        .await?;
 
-    Ok(response)
+    Ok(Json(keys))
 }
 
 #[cfg(test)]

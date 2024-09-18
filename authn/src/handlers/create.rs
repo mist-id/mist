@@ -9,7 +9,6 @@ use common::Result;
 use db::models::key::KeyKind;
 use dif_presentation_exchange::PresentationDefinition;
 use fred::prelude::*;
-use http::StatusCode;
 use image::{ImageFormat, Luma};
 use maud::{html, PreEscaped};
 use openidconnect::{
@@ -45,10 +44,6 @@ pub(crate) async fn handler(
     Path(path): Path<CreatePath>,
 ) -> Result<impl IntoResponse> {
     let service = state.repos.services.get_by_name(&path.service_name).await?;
-
-    let Some(service) = service else {
-        return Ok(StatusCode::NOT_FOUND.into_response());
-    };
 
     // Get the services' token key for signing the state and nonce.
     // ------------------------------------------------------------

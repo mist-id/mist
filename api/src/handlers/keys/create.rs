@@ -24,11 +24,6 @@ pub(crate) struct PathParams {
 pub(crate) struct Payload {
     #[garde(skip)]
     kind: KeyKind,
-    #[serde(rename = "key")]
-    #[garde(ascii, length(bytes, min = 64, max = 64))]
-    value: String,
-    #[garde(range(min = 1))]
-    priority: Option<i32>,
 }
 
 #[utoipa::path(
@@ -53,8 +48,7 @@ pub(crate) async fn create_handler(
             &state.env.master_key,
             &CreateKey::builder()
                 .kind(payload.kind.clone())
-                .value(payload.value.clone())
-                .priority(payload.priority.unwrap_or(1))
+                .priority(1)
                 .service_id(path.service_id)
                 .build(),
         )
@@ -87,7 +81,6 @@ mod tests {
         let master_key =
             SecVec::from("57a9f41af0c50e8b6560e5b65ad3b4111fa78a591ab6ce2f87d0b8c18d8ecd9");
         let service_id = Uuid::new_v4();
-        let key = "625c3ba938c1947e85c6eb36af959e22239ff964a90fe176a9f6581329d9b827";
 
         let mut keys = MockKeyRepo::new();
 
@@ -96,7 +89,6 @@ mod tests {
                 eq(master_key.clone()),
                 eq(CreateKey::builder()
                     .kind(KeyKind::Token)
-                    .value(key)
                     .priority(1)
                     .service_id(service_id)
                     .build()),
@@ -121,14 +113,13 @@ mod tests {
                     .method(http::Method::POST)
                     .uri(format!("/services/{service_id}/keys"))
                     .header(http::header::CONTENT_TYPE, "application/json")
-                    .body(Body::from(format!(
+                    .body(Body::from(
                         r#"
-                        {{
-                            "kind": "token",
-                            "key": "{key}"
-                        }}
+                        {
+                            "kind": "token"
+                        }
                     "#,
-                    )))?,
+                    ))?,
             )
             .await?;
 

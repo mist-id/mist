@@ -29,7 +29,7 @@ pub(crate) struct QueryParams {
     params(PathParams, QueryParams),
     responses(
         (status = 200, body = Key),
-        (status = 400)
+        (status = 404)
     )
 )]
 pub(crate) async fn preferred_handler(
@@ -37,15 +37,13 @@ pub(crate) async fn preferred_handler(
     Path(path): Path<PathParams>,
     Query(query): Query<QueryParams>,
 ) -> Result<impl IntoResponse> {
-    let response = Json(
-        state
-            .repos
-            .keys
-            .preferred(&path.service_id, &query.kind)
-            .await?,
-    );
+    let key = state
+        .repos
+        .keys
+        .preferred(&path.service_id, &query.kind)
+        .await?;
 
-    Ok(response)
+    Ok(Json(key))
 }
 
 #[cfg(test)]

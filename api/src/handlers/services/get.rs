@@ -23,16 +23,16 @@ pub(crate) struct PathParams {
     params(PathParams),
     responses(
         (status = 200, body = Service),
-        (status = 400)
+        (status = 404)
     )
 )]
 pub(crate) async fn get_handler(
     State(state): State<ApiState>,
     Path(path): Path<PathParams>,
 ) -> Result<impl IntoResponse> {
-    let response = state.repos.services.get(&path.id).await?;
+    let service = state.repos.services.get(&path.id).await?;
 
-    Ok(Json(response))
+    Ok(Json(service))
 }
 
 #[cfg(test)]

@@ -1,6 +1,9 @@
 use async_trait::async_trait;
-use common::{crypto::encrypt_service_key, Result};
-use secstr::SecStr;
+use common::{
+    crypto::{create_service_key, encrypt_service_key},
+    Result,
+};
+use secstr::SecVec;
 use sqlx::{query_file, query_file_as, PgPool};
 use uuid::Uuid;
 
@@ -16,8 +19,8 @@ pub trait KeyRepo: Send + Sync {
         limit: i64,
         offset: i64,
     ) -> Result<Vec<Key>>;
-    async fn create(&self, master_key: &SecStr, data: &CreateKey) -> Result<Key>;
-    async fn get(&self, id: &Uuid) -> Result<Option<Key>>;
+    async fn create(&self, master_key: &SecVec<u8>, data: &CreateKey) -> Result<Key>;
+    async fn get(&self, id: &Uuid) -> Result<Key>;
     async fn update(&self, id: &Uuid, data: &UpdateKey) -> Result<Key>;
     async fn destroy(&self, id: &Uuid) -> Result<Key>;
     async fn preferred(&self, service_id: &Uuid, kind: &KeyKind) -> Result<Key>;
@@ -56,8 +59,9 @@ impl KeyRepo for PgKeyRepo {
         Ok(key)
     }
 
-    async fn create(&self, master_key: &SecStr, data: &CreateKey) -> Result<Key> {
-        let key_encrypted = encrypt_service_key(master_key, data.value.as_bytes())?;
+    async fn create(&self, master_key: &SecVec<u8>, data: &CreateKey) -> Result<Key> {
+        let key = create_service_key();
+        let key_encrypted = encrypt_service_key(master_key, &key)?;
 
         let mut tx = self.pool.begin().await?;
 
@@ -85,16 +89,16 @@ impl KeyRepo for PgKeyRepo {
         Ok(key)
     }
 
-    async fn get(&self, id: &Uuid) -> Result<Option<Key>> {
+    async fn get(&self, id: &Uuid) -> Result<Key> {
         let key = query_file_as!(Key, "sql/keys/get.sql", &id)
-            .fetch_optional(&self.pool)
+            .fetch_one(&self.pool)
             .await?;
 
         Ok(key)
     }
 
     async fn update(&self, id: &Uuid, data: &UpdateKey) -> Result<Key> {
-        let key = self.get(id).await?.ok_or(sqlx::Error::RowNotFound)?;
+        let key = self.get(id).await?;
 
         let is_active = data.is_active.unwrap_or(key.is_active);
 

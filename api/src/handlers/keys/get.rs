@@ -1,6 +1,5 @@
 use axum::{
     extract::{Path, State},
-    http::StatusCode,
     response::IntoResponse,
     Json,
 };
@@ -24,23 +23,16 @@ pub(crate) struct PathParams {
     params(PathParams),
     responses(
         (status = 200, body = Key),
-        (status = 400)
+        (status = 404)
     )
 )]
 pub(crate) async fn get_handler(
     State(state): State<ApiState>,
     Path(path): Path<PathParams>,
 ) -> Result<impl IntoResponse> {
-    let response = state
-        .repos
-        .keys
-        .get(&path.id)
-        .await?
-        .map_or(StatusCode::NOT_FOUND.into_response(), |r| {
-            Json(r).into_response()
-        });
+    let key = state.repos.keys.get(&path.id).await?;
 
-    Ok(response)
+    Ok(Json(key))
 }
 
 #[cfg(test)]
@@ -72,7 +64,7 @@ mod tests {
         keys.expect_get()
             .with(eq(id))
             .once()
-            .returning(|_| Box::pin(ready(Ok(Some(Key::default())))));
+            .returning(|_| Box::pin(ready(Ok(Key::default()))));
 
         let app = router().with_state(ApiState {
             env: Environment::default(),

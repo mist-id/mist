@@ -44,6 +44,7 @@ pub(crate) async fn create_handler(
         .repos
         .services
         .create(
+            &state.env.master_key,
             &CreateService::builder()
                 .name(&payload.name)
                 .redirect_url(&payload.redirect_url)
@@ -72,6 +73,7 @@ mod tests {
         repos::{keys::MockKeyRepo, services::MockServiceRepo},
     };
     use mockall::predicate::*;
+    use secstr::SecVec;
     use tower::ServiceExt;
     use uuid::Uuid;
 
@@ -81,6 +83,8 @@ mod tests {
 
     #[tokio::test]
     async fn creates() -> Result<()> {
+        let master_key =
+            SecVec::from("d7456538654523fa190c520767911eb965c561b5d0eed95cd4d8250ec9105f66");
         let service_id = Uuid::new_v4();
 
         let mut services = MockServiceRepo::new();
@@ -88,6 +92,7 @@ mod tests {
         services
             .expect_create()
             .with(
+                eq(master_key.clone()),
                 eq(CreateService::builder()
                     .name("ACME")
                     .redirect_url("https://ac.me")
@@ -101,7 +106,7 @@ mod tests {
                     .build()),
             )
             .once()
-            .returning(move |_, _| {
+            .returning(move |_, _, _| {
                 Box::pin(ready(Ok(Service {
                     id: service_id,
                     ..Default::default()
@@ -109,7 +114,10 @@ mod tests {
             });
 
         let app = router().with_state(ApiState {
-            env: Environment::default(),
+            env: Environment {
+                master_key,
+                ..Default::default()
+            },
             repos: Repos {
                 services: Arc::new(services),
                 keys: Arc::new(MockKeyRepo::new()),
