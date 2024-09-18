@@ -39,7 +39,7 @@ pub(crate) async fn handler(
     Form(body): Form<VerifyBody>,
 ) -> Result<impl IntoResponse> {
     // Get the user's session data.
-    // ---------------------
+    // ----------------------------
 
     let parts = body.state.split(':').collect::<Vec<&str>>();
 

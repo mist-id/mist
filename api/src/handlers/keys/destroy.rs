@@ -24,7 +24,7 @@ pub(crate) struct PathParams {
     params(PathParams),
     responses(
         (status = 200, body = Key),
-        (status = 400)
+        (status = 404)
     )
 )]
 pub(crate) async fn destroy_handler(

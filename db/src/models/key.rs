@@ -29,8 +29,6 @@ pub enum KeyKind {
 #[derive(Builder, Debug, PartialEq)]
 pub struct CreateKey {
     pub kind: KeyKind,
-    #[builder(into)]
-    pub value: String,
     pub priority: i32,
     pub service_id: Uuid,
 }

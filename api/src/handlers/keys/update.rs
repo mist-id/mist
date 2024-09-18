@@ -33,7 +33,7 @@ pub(crate) struct Payload {
     request_body = UpdateKeyPayload,
     responses(
         (status = 200, body = Key),
-        (status = 400)
+        (status = 404)
     )
 )]
 pub(crate) async fn update_handler(

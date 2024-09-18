@@ -1,10 +1,10 @@
-use secstr::SecStr;
+use secstr::SecVec;
 use serde::{Deserialize, Deserializer};
 
 #[derive(Clone, Deserialize)]
 pub struct Environment {
     #[serde(deserialize_with = "string_to_secstr")]
-    pub master_key: SecStr,
+    pub master_key: SecVec<u8>,
     pub authn_url: String,
     #[serde(default = "default_postgres_url")]
     pub postgres_url: String,
@@ -18,12 +18,12 @@ pub struct Environment {
     pub development: bool,
 }
 
-pub fn string_to_secstr<'de, D>(deserializer: D) -> Result<SecStr, D::Error>
+pub fn string_to_secstr<'de, D>(deserializer: D) -> Result<SecVec<u8>, D::Error>
 where
     D: Deserializer<'de>,
 {
     let s: String = Deserialize::deserialize(deserializer)?;
-    Ok(SecStr::new(s.into_bytes()))
+    Ok(SecVec::from(s.into_bytes()))
 }
 
 fn default_postgres_url() -> String {
@@ -45,7 +45,7 @@ fn default_resolver_url() -> String {
 impl Default for Environment {
     fn default() -> Self {
         Self {
-            master_key: SecStr::new(vec![]),
+            master_key: SecVec::new(vec![]),
             authn_url: Default::default(),
             postgres_url: Default::default(),
             postgres_pool_size: Default::default(),

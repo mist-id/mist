@@ -1,10 +1,15 @@
 use async_trait::async_trait;
-use common::Result;
+use common::{
+    crypto::{create_service_key, encrypt_service_key},
+    Result,
+};
+use secstr::SecVec;
 use sqlx::{query_file_as, PgPool};
 use uuid::Uuid;
 
 use crate::models::{
     definition::{CreateDefinition, Definition},
+    key::{Key, KeyKind},
     service::{CreateService, Service, UpdateService},
 };
 
@@ -14,11 +19,12 @@ pub trait ServiceRepo: Send + Sync {
     async fn list(&self, limit: i64, offset: i64) -> Result<Vec<Service>>;
     async fn create(
         &self,
+        master_key: &SecVec<u8>,
         service: &CreateService,
         definition: &CreateDefinition,
     ) -> Result<Service>;
     async fn get(&self, id: &Uuid) -> Result<Service>;
-    async fn get_by_name(&self, name: &str) -> Result<Option<Service>>;
+    async fn get_by_name(&self, name: &str) -> Result<Service>;
     async fn update(&self, id: &Uuid, date: &UpdateService) -> Result<Service>;
     async fn destroy(&self, id: &Uuid) -> Result<Service>;
     async fn get_default_profile(&self, id: &Uuid) -> Result<Definition>;
@@ -46,6 +52,7 @@ impl ServiceRepo for PgServiceRepo {
 
     async fn create(
         &self,
+        master_key: &SecVec<u8>,
         service: &CreateService,
         definition: &CreateDefinition,
     ) -> Result<Service> {
@@ -58,6 +65,20 @@ impl ServiceRepo for PgServiceRepo {
             &service.redirect_url,
             &service.logout_url,
             &service.webhook_url
+        )
+        .fetch_one(&mut *tx)
+        .await?;
+
+        let key = create_service_key();
+        let key_encrypted = encrypt_service_key(master_key, &key)?;
+
+        query_file_as!(
+            Key,
+            "sql/keys/create.sql",
+            service.id,
+            KeyKind::Token as KeyKind,
+            key_encrypted,
+            1
         )
         .fetch_one(&mut *tx)
         .await?;
@@ -86,9 +107,9 @@ impl ServiceRepo for PgServiceRepo {
         Ok(profile)
     }
 
-    async fn get_by_name(&self, name: &str) -> Result<Option<Service>> {
+    async fn get_by_name(&self, name: &str) -> Result<Service> {
         let profile = query_file_as!(Service, "sql/services/get_by_name.sql", &name)
-            .fetch_optional(&self.pool)
+            .fetch_one(&self.pool)
             .await?;
 
         Ok(profile)
