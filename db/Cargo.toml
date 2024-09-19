@@ -10,6 +10,7 @@ bon = "2.2.1"
 chrono = { version = "0.4.38", features = ["serde"] }
 common = { path = "../common" }
 eyre = "0.6.12"
+hex = "0.4.3"
 mockall = "0.13.0"
 secstr = "0.5.1"
 serde = { version = "1.0.209", features = ["derive"] }

@@ -57,6 +57,7 @@ mod tests {
 
     #[tokio::test]
     async fn gets() -> Result<()> {
+        let service_id = Uuid::new_v4();
         let id = Uuid::new_v4();
 
         let mut keys = MockKeyRepo::new();
@@ -78,7 +79,7 @@ mod tests {
             .oneshot(
                 Request::builder()
                     .method(http::Method::GET)
-                    .uri(format!("/keys/{id}"))
+                    .uri(format!("/services/{service_id}/keys/{id}"))
                     .header(http::header::CONTENT_TYPE, "application/json")
                     .body(Body::from(()))?,
             )

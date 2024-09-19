@@ -1,14 +1,16 @@
+set dotenv-load
+
 post resource *args:
-  curlie post 0.0.0.0:9001/{{resource}} {{args}}
+  curlie post -H "Authorization: ${MASTER_KEY}" 0.0.0.0:9001/{{resource}} {{args}}
 
 put resource *args:
-  curlie put 0.0.0.0:9001/{{resource}} {{args}}
+  curlie put -H "Authorization: ${MASTER_KEY}" 0.0.0.0:9001/{{resource}} {{args}}
 
 get resource *args:
-  curlie get 0.0.0.0:9001/{{resource}} {{args}}
+  curlie get -H "Authorization: ${MASTER_KEY}" 0.0.0.0:9001/{{resource}} {{args}}
 
 del resource *args:
-  curlie delete 0.0.0.0:9001/{{resource}} {{args}}
+  curlie delete -H "Authorization: ${MASTER_KEY}" 0.0.0.0:9001/{{resource}} {{args}}
 
 # Delete all records of the given resource
 x resource:

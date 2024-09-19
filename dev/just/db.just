@@ -1,3 +1,5 @@
+set dotenv-load
+
 _lint *args:
   pre-commit run sqlfluff-fix --hook-stage manual {{args}}
 
@@ -11,7 +13,7 @@ lint-all:
 
 # Run migrations
 migrate:
-  @ dotenvx run -- sqlx migrate run --source {{justfile_directory()}}/db/migrations
+  @ sqlx migrate run --source {{justfile_directory()}}/db/migrations
   @ echo "👻 Migrations complete!" | gum format
 
 # Export query matadata

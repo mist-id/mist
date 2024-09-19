@@ -58,6 +58,9 @@ impl ServiceRepo for PgServiceRepo {
     ) -> Result<Service> {
         let mut tx = self.pool.begin().await?;
 
+        // Create the service.
+        // -------------------
+
         let service = query_file_as!(
             Service,
             "sql/services/create.sql",
@@ -68,6 +71,26 @@ impl ServiceRepo for PgServiceRepo {
         )
         .fetch_one(&mut *tx)
         .await?;
+
+        // Create the API key.
+        // -------------------
+
+        let key = create_service_key();
+        let key_encrypted = encrypt_service_key(master_key, &key)?;
+
+        query_file_as!(
+            Key,
+            "sql/keys/create.sql",
+            service.id,
+            KeyKind::Api as KeyKind,
+            key_encrypted,
+            1
+        )
+        .fetch_one(&mut *tx)
+        .await?;
+
+        // Create the signing key.
+        // -----------------------
 
         let key = create_service_key();
         let key_encrypted = encrypt_service_key(master_key, &key)?;
@@ -83,6 +106,9 @@ impl ServiceRepo for PgServiceRepo {
         .fetch_one(&mut *tx)
         .await?;
 
+        // Create the default definition.
+        // ------------------------------
+
         query_file_as!(
             Definition,
             "sql/definitions/create.sql",
@@ -94,6 +120,7 @@ impl ServiceRepo for PgServiceRepo {
         .fetch_one(&mut *tx)
         .await?;
 
+        // All done; commit the transaction.
         tx.commit().await?;
 
         Ok(service)
