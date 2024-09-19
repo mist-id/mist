@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use axum::{extract::State, response::IntoResponse, Form};
 use chrono::Utc;
-use common::Result;
+use common::{crypto::decrypt_service_key, Result};
 use db::models::key::KeyKind;
 use eyre::{eyre, OptionExt};
 use fred::prelude::*;
@@ -18,10 +18,7 @@ use ssi::{
 use uuid::Uuid;
 
 use crate::{
-    crypto::{
-        keys::decrypt_service_key,
-        oidc::{sign_nonce, sign_state},
-    },
+    crypto::oidc::{sign_nonce, sign_state},
     state::AuthnState,
     webhooks::RegistrationWebhook,
     AuthHookSessionData, AuthSessionData, REDIS_AUTH_HOOK_KEY, REDIS_AUTH_KEY,
@@ -64,7 +61,7 @@ pub(crate) async fn handler(
         .preferred(&service.id, &KeyKind::Token)
         .await?;
 
-    let service_key = decrypt_service_key(&state.env.master_key, &service_key)?;
+    let service_key = decrypt_service_key(&state.env.master_key, &service_key.value)?;
 
     // Verify that the state returned by the user matches the one we sent.
     // -------------------------------------------------------------------

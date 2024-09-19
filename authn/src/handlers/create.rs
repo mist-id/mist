@@ -5,7 +5,7 @@ use axum::{
     response::IntoResponse,
 };
 use base64::prelude::*;
-use common::Result;
+use common::{crypto::decrypt_service_key, Result};
 use db::models::key::KeyKind;
 use dif_presentation_exchange::PresentationDefinition;
 use fred::prelude::*;
@@ -25,10 +25,7 @@ use tower_cookies::{
 use uuid::Uuid;
 
 use crate::{
-    crypto::{
-        keys::decrypt_service_key,
-        oidc::{create_signed_nonce, created_signed_state},
-    },
+    crypto::oidc::{create_signed_nonce, created_signed_state},
     state::AuthnState,
     AuthSessionData, COOKIE_KEY, REDIS_AUTH_KEY,
 };
@@ -54,7 +51,7 @@ pub(crate) async fn handler(
         .preferred(&service.id, &KeyKind::Token)
         .await?;
 
-    let service_key = decrypt_service_key(&state.env.master_key, &service_key)?;
+    let service_key = decrypt_service_key(&state.env.master_key, &service_key.value)?;
 
     // Create a presentation from the services' default profile definition.
     // --------------------------------------------------------------------
