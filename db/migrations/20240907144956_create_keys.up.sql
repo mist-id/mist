@@ -1,5 +1,5 @@
 -- Add up migration script here
-create type key_kind as enum ('token');
+create type key_kind as enum ('api', 'token');
 
 create table keys (
     id uuid primary key default uuid_generate_v4(),

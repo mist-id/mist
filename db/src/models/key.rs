@@ -23,6 +23,7 @@ pub struct Key {
 #[serde(rename_all = "lowercase")]
 pub enum KeyKind {
     #[default]
+    Api,
     Token,
 }
 

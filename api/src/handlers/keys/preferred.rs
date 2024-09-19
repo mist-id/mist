@@ -25,7 +25,7 @@ pub(crate) struct QueryParams {
     tags = ["Keys"],
     summary = "Get preferred key",
     get,
-    path = "/services/{service_id}/keys/preferred",
+    path = "/preferred",
     params(PathParams, QueryParams),
     responses(
         (status = 200, body = Key),

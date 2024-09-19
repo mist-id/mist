@@ -26,7 +26,7 @@ pub(crate) struct QueryParams {
     tags = ["Keys"],
     summary = "List keys",
     get,
-    path = "/services/{service_id}/keys",
+    path = "",
     params(PathParams, QueryParams),
     responses(
         (status = 200, body = Vec<Key>)

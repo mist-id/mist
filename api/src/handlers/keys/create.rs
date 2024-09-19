@@ -30,7 +30,7 @@ pub(crate) struct Payload {
     tags = ["Keys"],
     summary = "Create key",
     post,
-    path = "/services/{service_id}/keys",
+    path = "",
     request_body = CreateKeyPayload,
     responses(
         (status = 201, body = Key)
