@@ -35,6 +35,7 @@ COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UU
 --
 
 CREATE TYPE public.key_kind AS ENUM (
+    'api',
     'token'
 );
 

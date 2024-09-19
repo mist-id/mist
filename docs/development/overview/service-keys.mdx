@@ -2,8 +2,8 @@
 title: Service keys
 ---
 
-**Service keys** are used to sign and verify pieces of the authentication flow.
-They are stored in the database encrypted with a **master key**.
+**Service keys** are used to sign and verify pieces of the authentication flow, as well as access
+the API. They are stored in the database, encrypted with a **master key**.
 
 ```mermaid
 %%{
@@ -15,24 +15,23 @@ They are stored in the database encrypted with a **master key**.
 }%%
 
 graph TD
-  Database[(Database)]
-
   subgraph master[" "]
     Environment((Environment)) --> MasterHex
     MasterHex[Hex String] -->|Decode & into Bytes| MasterBytes[Master Key]
   end
 
   subgraph storing[Storing a Key]
-    SKeyHex[Hex String] -->|Decode| SKey[Key]
+    SServiceCreation[Service Creation] --> SKey[Key]
     MasterBytes --> SCipher[Cipher]
     SNonce[Nonce]
-    SCipher & SNonce & SKey --> SKeyEncrypted[Encrypted Key]
+    SCipher & SNonce & SKey[Key] --> SKeyEncrypted[Encrypted Key]
     SNonce & SKeyEncrypted --> SCombined[Nonce + Encrypted Key]
-    SCombined --> Database
   end
 
+  SCombined --> Database[(Database)]
+  Database --> UCombined[Nonce + Encrypted Key]
+
   subgraph using[Using a Key]
-    Database --> UCombined[Nonce + Encrypted Key]
     UCombined --> UNonce[Nonce]
     UCombined --> UKeyEncrypted[Encrypted Key]
     MasterBytes --> UCipher[Cipher]

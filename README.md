@@ -1,11 +1,11 @@
 <div align="center">
   <h4><span style="font-weight: normal">Your identity, your data — </span>Anchored in <a href="https://mist.id">Mist</a><h4>
 
-![License](https://img.shields.io/badge/License-Apache_2.0%2C_MIT-black)
-![PRs Welcome](https://img.shields.io/badge/PRs-welcome-black)
-![Status](https://img.shields.io/badge/Status-proof%20of%20concept-white)
-![CI Status](https://img.shields.io/github/actions/workflow/status/mist-id/mist/ci.yml?label=CI)
-
+  ![License](https://img.shields.io/badge/License-Apache_2.0%2C_MIT-black)
+  [![CI Status](https://img.shields.io/github/actions/workflow/status/mist-id/mist/ci.yml?label=CI)](https://github.com/mist-id/mist/actions/workflows/ci.yml)
+  [![Docs](https://img.shields.io/badge/Docs-online-grass)](https://docs.mist.id/)
+  ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-black)
+  ![Status](https://img.shields.io/badge/Status-proof%20of%20concept-white)
 </div>
 
 > **Mist** is an open-source Identity and Access Management (IAM) platform designed to bridge the gap between emerging technologies within the Self-Sovereign Identity (SSI) space and traditional web applications.
@@ -32,10 +32,10 @@ Mist aims to:
 
 ### Current State
 
-I have a working prototype with basic functionality, but it is not yet feature-complete or production-ready.
+I have a working prototype with basic functionality, but it is not yet feature-complete or production-ready. **Breaking changes are expected**.
 Current capabilities include:
 
-- Service creation via API
+- Service creation and management via API
 - Basic authentication flow using SIOPv2 and DIDs
 - User information retrieval via Verifiable Presentations (VPs) and Verifiable Credentials (VCs)
 - Simple user creation and storage within a service
@@ -43,16 +43,9 @@ Current capabilities include:
 
 Check out the [roadmap](https://github.com/orgs/mist-id/projects/1) for more information on upcoming features.
 
-## Demo
-
-There's a [live demo](https://mist-demo.fly.dev) available to see the authentication flow in action.
-You'll need an SIOP-compliant wallet to authenticate, such as [Sphereon's mobile wallet](https://github.com/Sphereon-Opensource/mobile-wallet).
-
-The source code for the demo is available in the [`demo`](demo) directory.
-
 ## Looking to Contribute?
 
-Check the [development docs](https://docs.mist.id/development/quick-start) for more information on how to get started with development.
+Check the [development docs](https://docs.mist.id/development/quick-start) for more information on how to get started.
 
 ## Acknowledgements
 
