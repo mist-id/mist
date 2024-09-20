@@ -18,8 +18,8 @@
   "tabs": [
     {
       "name": "API Reference",
-      "openapi": "/api/openapi.json",
-      "url": "api"
+      "openapi": "/api-reference/openapi.json",
+      "url": "api-reference"
     }
   ],
   "anchors": [
