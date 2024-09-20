@@ -49,36 +49,43 @@ async fn handle_registration(
 
     let auth_session = serde_json::from_str::<AuthSessionData>(&auth_session)?;
 
-    // Create the user and associated DID.
-    // -----------------------------------
+    // Create the user and associated DID if they don't already exist.
+    // ---------------------------------------------------------------
 
-    state
-        .repos
-        .users
-        .create(
-            &CreateUser::builder()
-                .id(auth_session.user_id)
-                .service_id(auth_session.service_id)
-                .build(),
-        )
-        .await?;
-
-    state
+    let existing = state
         .repos
         .identifiers
-        .create(
-            &CreateIdentifier::builder()
-                .value(body.data.identifier.clone())
-                .user_id(auth_session.user_id)
-                .build(),
-        )
+        .get_by_value(&body.data.identifier)
         .await?;
+
+    if existing.is_none() {
+        state
+            .repos
+            .users
+            .create(
+                &CreateUser::builder()
+                    .id(auth_session.user_id)
+                    .service_id(auth_session.service_id)
+                    .build(),
+            )
+            .await?;
+
+        state
+            .repos
+            .identifiers
+            .create(
+                &CreateIdentifier::builder()
+                    .value(body.data.identifier.clone())
+                    .user_id(auth_session.user_id)
+                    .build(),
+            )
+            .await?;
+    }
 
     // Complete the registration process.
     // ----------------------------------
 
     // Send an event to the user's browser to let it know authentication is complete.
-    //
     // This event will be picked up by an event listener in the browser listening to the `wait` handler.
     state
         .redis_pub_client

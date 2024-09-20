@@ -190,11 +190,11 @@ ALTER TABLE ONLY public.identifiers
 
 
 --
--- Name: identifiers identifiers_user_id_value_key; Type: CONSTRAINT; Schema: public; Owner: casper
+-- Name: identifiers identifiers_value_key; Type: CONSTRAINT; Schema: public; Owner: casper
 --
 
 ALTER TABLE ONLY public.identifiers
-    ADD CONSTRAINT identifiers_user_id_value_key UNIQUE (user_id, value);
+    ADD CONSTRAINT identifiers_value_key UNIQUE (value);
 
 
 --

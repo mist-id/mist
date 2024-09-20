@@ -8,6 +8,7 @@ use crate::models::identifier::{CreateIdentifier, Identifier};
 #[mockall::automock]
 pub trait IdentifierRepo: Send + Sync {
     async fn create(&self, data: &CreateIdentifier) -> Result<Identifier>;
+    async fn get_by_value(&self, value: &str) -> Result<Option<Identifier>>;
 }
 
 pub struct PgIdentifierRepo {
@@ -31,6 +32,14 @@ impl IdentifierRepo for PgIdentifierRepo {
         )
         .fetch_one(&self.pool)
         .await?;
+
+        Ok(identifier)
+    }
+
+    async fn get_by_value(&self, value: &str) -> Result<Option<Identifier>> {
+        let identifier = query_file_as!(Identifier, "sql/identifiers/get_by_value.sql", value)
+            .fetch_optional(&self.pool)
+            .await?;
 
         Ok(identifier)
     }

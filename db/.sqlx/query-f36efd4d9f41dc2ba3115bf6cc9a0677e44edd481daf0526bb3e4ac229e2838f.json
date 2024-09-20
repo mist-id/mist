@@ -21,6 +21,7 @@
             "name": "key_kind",
             "kind": {
               "Enum": [
+                "api",
                 "token"
               ]
             }
@@ -61,6 +62,7 @@
             "name": "key_kind",
             "kind": {
               "Enum": [
+                "api",
                 "token"
               ]
             }
