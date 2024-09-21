@@ -1,6 +1,5 @@
 [workspace]
-members = ["api", "authn", "common", "db", "runner"]
-exclude = ["demo"]
+members = ["mist/*"]
 resolver = "2"
 
 [workspace.package]
