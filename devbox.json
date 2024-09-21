@@ -21,16 +21,14 @@
     "sqlx-cli": "latest",
     "toml-cli": "latest",
     "darwin.apple_sdk.frameworks.SystemConfiguration": {
-      "platforms": [
-        "x86_64-darwin",
-        "aarch64-darwin"
-      ]
+      "platforms": ["x86_64-darwin", "aarch64-darwin"]
     }
   },
   "shell": {
     "init_hook": [
       "rustup override set $(toml get --raw $DEVBOX_PROJECT_ROOT/rust-toolchain.toml toolchain.channel)",
       "test -f .devbox/virtenv/postgresql_16/data/PG_VERSION && test -d .devbox/virtenv/postgresql_16/data/base || initdb",
+      "pre-commit install",
       "sh dev/devbox/hello.sh"
     ]
   }
