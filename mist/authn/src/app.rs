@@ -40,9 +40,9 @@ pub async fn app(env: Environment) -> Router {
         .with_state(AuthnState {
             env,
             repos,
-            redis_client,
-            redis_pub_client,
-            redis_sub_client,
+            redis: redis_client,
+            redis_pub: redis_pub_client,
+            redis_sub: redis_sub_client,
         })
         .layer(CookieManagerLayer::new())
 }

@@ -14,7 +14,7 @@ use tokio::sync::mpsc;
 use tokio_stream::{wrappers::ReceiverStream, Stream};
 use tower_cookies::Cookies;
 
-use crate::{state::AuthnState, COOKIE_KEY, REDIS_RESPONSE_RECEIVED_KEY};
+use crate::{session::COOKIE_KEY, state::AuthnState, utils::redis::REDIRECT};
 
 pub(crate) async fn handler(
     cookies: Cookies,
@@ -27,14 +27,11 @@ pub(crate) async fn handler(
 
     // Subscribe to the response channel keyed by the cookie value (the user session ID).
     state
-        .redis_sub_client
-        .subscribe(format!(
-            "{REDIS_RESPONSE_RECEIVED_KEY}-{uuid}",
-            uuid = cookie.value()
-        ))
+        .redis_sub
+        .subscribe(REDIRECT.key(cookie.value()))
         .await?;
 
-    state.redis_sub_client.on_message(move |_| {
+    state.redis_sub.on_message(move |_| {
         let tx_clone = Arc::clone(&tx_arc);
 
         tokio::spawn(async move {

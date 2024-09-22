@@ -1,49 +1,59 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use serde_json::{Map, Value};
 use uuid::Uuid;
 
+use crate::utils::redis::TypedRedisKey;
+
+pub(crate) mod registration;
+
 #[derive(Serialize, Deserialize)]
-#[serde(rename_all = "lowercase")]
-pub(crate) enum WebhookKind {
-    Registration,
+pub(crate) struct Webhook {
+    pub(crate) meta: Meta,
+    pub(crate) data: Request,
 }
 
 #[derive(Serialize, Deserialize)]
 pub(crate) struct Meta {
     pub(crate) id: Uuid,
-    pub(crate) kind: WebhookKind,
     pub(crate) timestamp: DateTime<Utc>,
+    pub(crate) kind: Kind,
 }
 
 #[derive(Serialize, Deserialize)]
-pub(crate) struct RegistrationWebhook {
-    pub(crate) meta: Meta,
-    pub(crate) data: RegistrationWebhookData,
+#[serde(rename_all = "lowercase")]
+pub(crate) enum Kind {
+    Registration,
 }
 
 #[derive(Serialize, Deserialize)]
-pub(crate) struct RegistrationWebhookData {
-    pub(crate) id: Uuid,
-    pub(crate) identifier: String,
-    pub(crate) profile: Map<String, Value>,
+#[serde(rename_all = "lowercase")]
+pub(crate) enum Request {
+    Registration(registration::Request),
 }
 
-impl RegistrationWebhook {
-    pub fn new(user_id: &Uuid, did: &str, profile: Map<String, Value>) -> Self {
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub(crate) enum Response {
+    Registration(registration::Response),
+}
+
+impl Webhook {
+    pub fn new(kind: Kind, data: Request) -> Self {
         Self {
             meta: Meta {
                 id: Uuid::new_v4(),
-                kind: WebhookKind::Registration,
                 timestamp: Utc::now(),
+                kind,
             },
-            data: RegistrationWebhookData {
-                id: *user_id,
-                identifier: did.into(),
-                profile,
-            },
+            data,
         }
     }
 }
 
-pub type RegistrationWebhookResponse = RegistrationWebhook;
+#[derive(Serialize, Deserialize)]
+pub(crate) struct HookData {
+    pub(crate) session_id: Uuid,
+    pub(crate) identifier: String,
+}
+
+pub(crate) static HOOK_DATA: TypedRedisKey<HookData> = TypedRedisKey::new("mist-hook");

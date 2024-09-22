@@ -9,7 +9,7 @@ use crate::models::user::{CreateUser, User};
 #[mockall::automock]
 pub trait UserRepo: Send + Sync {
     async fn create(&self, data: &CreateUser) -> Result<User>;
-    async fn get(&self, id: &Uuid) -> Result<Option<User>>;
+    async fn get(&self, id: &Uuid) -> Result<User>;
 }
 
 pub struct PgUserRepo {
@@ -32,9 +32,9 @@ impl UserRepo for PgUserRepo {
         Ok(user)
     }
 
-    async fn get(&self, id: &Uuid) -> Result<Option<User>> {
+    async fn get(&self, id: &Uuid) -> Result<User> {
         let user = query_file_as!(User, "sql/users/get.sql", id)
-            .fetch_optional(&self.pool)
+            .fetch_one(&self.pool)
             .await?;
 
         Ok(user)

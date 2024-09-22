@@ -1,9 +1,9 @@
-mod create;
-mod hook;
-mod kill;
-mod verify;
-mod wait;
-mod who;
+mod kill_session;
+mod start_auth;
+mod verify_response;
+mod wait_for_completion;
+mod webhook;
+mod whoami;
 
 use axum::{routing, Router};
 
@@ -11,10 +11,10 @@ use crate::state::AuthnState;
 
 pub(crate) fn router() -> Router<AuthnState> {
     Router::new()
-        .route("/:service_name", routing::get(create::handler))
-        .route("/waiting", routing::get(wait::handler))
-        .route("/verify", routing::post(verify::handler))
-        .route("/hook", routing::post(hook::handler))
-        .route("/who", routing::get(who::handler))
-        .route("/kill", routing::post(kill::handler))
+        .route("/:service_name/:action", routing::get(start_auth::handler))
+        .route("/:service_name/out", routing::post(kill_session::handler))
+        .route("/waiting", routing::get(wait_for_completion::handler))
+        .route("/auth", routing::post(verify_response::handler))
+        .route("/hook", routing::post(webhook::handler))
+        .route("/whoami", routing::get(whoami::handler))
 }
