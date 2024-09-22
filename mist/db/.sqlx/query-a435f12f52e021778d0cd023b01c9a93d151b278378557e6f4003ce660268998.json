@@ -1,0 +1,33 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "select case\n  when count(*) > 1 then true else false\nend as has_active_keys\nfrom keys where service_id = $1 and kind = $2 and is_active = true;\n",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "has_active_keys",
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        {
+          "Custom": {
+            "name": "key_kind",
+            "kind": {
+              "Enum": [
+                "api",
+                "token"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "a435f12f52e021778d0cd023b01c9a93d151b278378557e6f4003ce660268998"
+}
