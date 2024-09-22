@@ -12,6 +12,8 @@ pub struct Environment {
     pub postgres_pool_size: u32,
     #[serde(default = "default_redis_url")]
     pub redis_url: String,
+    #[serde(default = "default_nats_url")]
+    pub nats_url: String,
     #[serde(default = "default_resolver_url")]
     pub resolver_url: String,
     #[serde(default)]
@@ -38,6 +40,10 @@ fn default_redis_url() -> String {
     "redis://localhost".into()
 }
 
+fn default_nats_url() -> String {
+    "nats://localhost:4222".into()
+}
+
 fn default_resolver_url() -> String {
     "http://localhost:9050/1.0/identifiers".into()
 }
@@ -50,6 +56,7 @@ impl Default for Environment {
             postgres_url: Default::default(),
             postgres_pool_size: Default::default(),
             redis_url: Default::default(),
+            nats_url: Default::default(),
             resolver_url: Default::default(),
             development: Default::default(),
         }

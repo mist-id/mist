@@ -11,9 +11,9 @@ use http::StatusCode;
 use tower_cookies::Cookies;
 
 use crate::{
+    events::{get_event_key, Event},
     session::{AuthSession, AuthState, AUTH_SESSION, COOKIE_KEY},
     state::AuthnState,
-    utils::redis::REDIRECT,
     webhooks::{self, HOOK_DATA},
 };
 
@@ -139,8 +139,11 @@ async fn handle_registration(
     // This event will be picked up by an event listener in the browser listening to
     // the `waiting_for_completion` handler.
     state
-        .redis_pub
-        .publish(REDIRECT.key(&hook_session.session_id.to_string()), "...")
+        .nats
+        .publish(
+            get_event_key(&Event::Redirect, &hook_session.session_id.to_string()),
+            "".into(),
+        )
         .await?;
 
     Ok(StatusCode::OK.into_response())

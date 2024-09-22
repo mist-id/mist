@@ -603,6 +603,54 @@
         }
       }
     },
+    "nats-server@latest": {
+      "last_modified": "2024-09-10T15:01:03Z",
+      "resolved": "github:NixOS/nixpkgs/5ed627539ac84809c78b2dd6d26a5cebeb5ae269#nats-server",
+      "source": "devbox-search",
+      "version": "2.10.20",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/rj3nxrrbqlf9c3cq3y74a41sayj2rk1a-nats-server-2.10.20",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/rj3nxrrbqlf9c3cq3y74a41sayj2rk1a-nats-server-2.10.20"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/mvglvm5snqzpgmdha0s4ihrf530wnrw8-nats-server-2.10.20",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/mvglvm5snqzpgmdha0s4ihrf530wnrw8-nats-server-2.10.20"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/3y51imvhk02vz9pp340df5dcx6rfjibw-nats-server-2.10.20",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/3y51imvhk02vz9pp340df5dcx6rfjibw-nats-server-2.10.20"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/cv0n42a1fx39dd89a8n2j6z2gihqz94g-nats-server-2.10.20",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/cv0n42a1fx39dd89a8n2j6z2gihqz94g-nats-server-2.10.20"
+        }
+      }
+    },
     "nodejs@latest": {
       "last_modified": "2024-08-31T10:12:23Z",
       "plugin_version": "0.0.2",

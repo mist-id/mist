@@ -13,11 +13,11 @@ use serde_json::{Map, Value};
 use ssi::{did::VerificationMethod, did_resolve::ResolutionResult, jwk::JWK, vc::OneOrMany};
 
 use crate::{
+    events::{get_event_key, Event},
     session::{AuthAction, AuthSession, AuthState, SessionId, AUTH_SESSION},
     state::AuthnState,
     utils::{
         oidc,
-        redis::REDIRECT,
         sphereon::{SphereonCredentialWrapper, SphereonTokenWrapper},
     },
     webhooks::{self, HookData, Webhook, HOOK_DATA},
@@ -316,8 +316,8 @@ async fn handle_in(
     // This event will be picked up by an event listener in the browser listening to
     // the `waiting_for_completion` handler.
     state
-        .redis_pub
-        .publish(REDIRECT.key(session_id), "...")
+        .nats
+        .publish(get_event_key(&Event::Redirect, session_id), "".into())
         .await?;
 
     Ok(())
