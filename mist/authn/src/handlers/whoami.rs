@@ -1,10 +1,10 @@
 use axum::{extract::State, response::IntoResponse};
 use common::Result;
+use db::models::user::UserId;
 use eyre::OptionExt;
 use http::StatusCode;
 use serde::Serialize;
 use tower_cookies::Cookies;
-use uuid::Uuid;
 
 use crate::{
     session::{AuthState, AUTH_SESSION, COOKIE_KEY},
@@ -13,7 +13,7 @@ use crate::{
 
 #[derive(Serialize)]
 pub(crate) struct Response {
-    id: Uuid,
+    id: UserId,
     identifier: String,
 }
 

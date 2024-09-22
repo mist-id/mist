@@ -5,17 +5,16 @@ use axum::{
 };
 use axum_garde::WithValidation;
 use common::Result;
-use db::models::service::UpdateService;
+use db::models::service::{ServiceId, UpdateService};
 use garde::Validate;
 use serde::{Deserialize, Serialize};
 use utoipa::{IntoParams, ToSchema};
-use uuid::Uuid;
 
 use crate::state::ApiState;
 
 #[derive(Deserialize, IntoParams)]
 pub(crate) struct PathParams {
-    id: Uuid,
+    id: ServiceId,
 }
 
 #[derive(Serialize, Deserialize, Validate, ToSchema)]
@@ -87,7 +86,7 @@ mod tests {
 
     #[tokio::test]
     async fn updates() -> Result<()> {
-        let id = Uuid::new_v4();
+        let id = ServiceId::new();
 
         let mut services = MockServiceRepo::new();
 

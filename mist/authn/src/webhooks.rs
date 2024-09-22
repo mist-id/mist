@@ -1,10 +1,20 @@
 use chrono::{DateTime, Utc};
+use derive_more::{AsRef, Display, From, FromStr, Into};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::utils::redis::TypedRedisKey;
+use crate::{session::SessionId, utils::redis::TypedRedisKey};
 
 pub(crate) mod registration;
+
+#[derive(Default, Debug, Display, Serialize, Deserialize, AsRef, From, FromStr, Into)]
+pub struct WebhookId(pub Uuid);
+
+impl WebhookId {
+    pub fn new() -> Self {
+        Self(Uuid::new_v4())
+    }
+}
 
 #[derive(Serialize, Deserialize)]
 pub(crate) struct Webhook {
@@ -14,7 +24,7 @@ pub(crate) struct Webhook {
 
 #[derive(Serialize, Deserialize)]
 pub(crate) struct Meta {
-    pub(crate) id: Uuid,
+    pub(crate) id: WebhookId,
     pub(crate) timestamp: DateTime<Utc>,
     pub(crate) kind: Kind,
 }
@@ -41,7 +51,7 @@ impl Webhook {
     pub fn new(kind: Kind, data: Request) -> Self {
         Self {
             meta: Meta {
-                id: Uuid::new_v4(),
+                id: WebhookId::new(),
                 timestamp: Utc::now(),
                 kind,
             },
@@ -52,7 +62,7 @@ impl Webhook {
 
 #[derive(Serialize, Deserialize)]
 pub(crate) struct HookData {
-    pub(crate) session_id: Uuid,
+    pub(crate) session_id: SessionId,
     pub(crate) identifier: String,
 }
 

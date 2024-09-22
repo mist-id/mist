@@ -3,15 +3,15 @@ use axum::{
     response::IntoResponse,
 };
 use common::{crypto::decrypt_service_key, Result};
+use db::models::key::KeyId;
 use serde::Deserialize;
 use utoipa::IntoParams;
-use uuid::Uuid;
 
 use crate::state::ApiState;
 
 #[derive(Deserialize, IntoParams)]
 pub(crate) struct PathParams {
-    id: Uuid,
+    id: KeyId,
 }
 
 #[utoipa::path(
@@ -49,7 +49,7 @@ mod tests {
         env::Environment,
     };
     use db::{
-        models::key::Key,
+        models::{key::Key, service::ServiceId},
         repos::{keys::MockKeyRepo, services::MockServiceRepo},
     };
     use mockall::predicate::*;
@@ -64,8 +64,8 @@ mod tests {
     async fn gets() -> Result<()> {
         let master_key =
             SecVec::from("cec1125efa4807e7b9aa961b04646a73c26fb0df36a87bf43f475a06d3fe2026");
-        let service_id = Uuid::new_v4();
-        let id = Uuid::new_v4();
+        let service_id = ServiceId::new();
+        let id = KeyId::new();
 
         let mut keys = MockKeyRepo::new();
 

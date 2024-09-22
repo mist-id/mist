@@ -6,15 +6,14 @@ use axum::{
 };
 use common::{crypto::decrypt_service_key, error::Result};
 use constant_time_eq::constant_time_eq;
-use db::models::key::KeyKind;
+use db::models::{key::KeyKind, service::ServiceId};
 use serde::Deserialize;
-use uuid::Uuid;
 
 use crate::state::ApiState;
 
 #[derive(Deserialize)]
 pub(crate) struct PathParams {
-    service_id: Option<Uuid>,
+    service_id: Option<ServiceId>,
 }
 
 pub(crate) async fn middleware(

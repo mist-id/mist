@@ -4,15 +4,15 @@ use axum::{
     Json,
 };
 use common::Result;
+use db::models::service::ServiceId;
 use serde::Deserialize;
 use utoipa::IntoParams;
-use uuid::Uuid;
 
 use crate::state::ApiState;
 
 #[derive(Deserialize, IntoParams)]
 pub(crate) struct PathParams {
-    id: Uuid,
+    id: ServiceId,
 }
 
 #[utoipa::path(
@@ -57,7 +57,7 @@ mod tests {
 
     #[tokio::test]
     async fn destroys() -> Result<()> {
-        let id = Uuid::new_v4();
+        let id = ServiceId::new();
 
         let mut services = MockServiceRepo::new();
 

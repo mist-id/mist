@@ -11,10 +11,9 @@ use openidconnect::core::CoreIdTokenClaims;
 use serde::Deserialize;
 use serde_json::{Map, Value};
 use ssi::{did::VerificationMethod, did_resolve::ResolutionResult, jwk::JWK, vc::OneOrMany};
-use uuid::Uuid;
 
 use crate::{
-    session::{AuthAction, AuthSession, AuthState, AUTH_SESSION},
+    session::{AuthAction, AuthSession, AuthState, SessionId, AUTH_SESSION},
     state::AuthnState,
     utils::{
         oidc,
@@ -69,7 +68,7 @@ pub(crate) async fn handler(
     let expected_signature = oidc::sign_state(
         &service_key,
         received_state,
-        &Uuid::from_str(received_session_id)?,
+        &SessionId::from_str(received_session_id)?,
     )?;
 
     if received_signature != &expected_signature {
@@ -262,7 +261,7 @@ async fn handle_up(
             &state.redis,
             &hook.meta.id.to_string(),
             &HookData {
-                session_id: Uuid::from_str(session_id)?,
+                session_id: SessionId::from_str(session_id)?,
                 identifier: did.into(),
             },
             Expiration::EX(60 * 5),

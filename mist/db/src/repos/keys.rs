@@ -5,25 +5,27 @@ use common::{
 };
 use secstr::SecVec;
 use sqlx::{query_file, query_file_as, PgPool};
-use uuid::Uuid;
 
-use crate::models::key::{CreateKey, Key, KeyKind, UpdateKey};
+use crate::models::{
+    key::{CreateKey, Key, KeyId, KeyKind, UpdateKey},
+    service::ServiceId,
+};
 
 #[async_trait]
 #[mockall::automock]
 pub trait KeyRepo: Send + Sync {
     async fn list(
         &self,
-        service_id: &Uuid,
+        service_id: &ServiceId,
         is_active: bool,
         limit: i64,
         offset: i64,
     ) -> Result<Vec<Key>>;
     async fn create(&self, master_key: &SecVec<u8>, data: &CreateKey) -> Result<Key>;
-    async fn get(&self, id: &Uuid) -> Result<Key>;
-    async fn update(&self, id: &Uuid, data: &UpdateKey) -> Result<Key>;
-    async fn destroy(&self, id: &Uuid) -> Result<Key>;
-    async fn preferred(&self, service_id: &Uuid, kind: &KeyKind) -> Result<Key>;
+    async fn get(&self, id: &KeyId) -> Result<Key>;
+    async fn update(&self, id: &KeyId, data: &UpdateKey) -> Result<Key>;
+    async fn destroy(&self, id: &KeyId) -> Result<Key>;
+    async fn preferred(&self, service_id: &ServiceId, kind: &KeyKind) -> Result<Key>;
 }
 
 pub struct PgKeyRepo {
@@ -40,7 +42,7 @@ impl PgKeyRepo {
 impl KeyRepo for PgKeyRepo {
     async fn list(
         &self,
-        service_id: &Uuid,
+        service_id: &ServiceId,
         is_active: bool,
         limit: i64,
         offset: i64,
@@ -48,7 +50,7 @@ impl KeyRepo for PgKeyRepo {
         let key = query_file_as!(
             Key,
             "sql/keys/list.sql",
-            service_id,
+            service_id.as_ref(),
             is_active,
             limit,
             offset,
@@ -67,7 +69,7 @@ impl KeyRepo for PgKeyRepo {
 
         query_file!(
             "sql/keys/bump-priority.sql",
-            &data.service_id,
+            &data.service_id.as_ref(),
             data.kind.clone() as KeyKind
         )
         .execute(&mut *tx)
@@ -76,7 +78,7 @@ impl KeyRepo for PgKeyRepo {
         let key = query_file_as!(
             Key,
             "sql/keys/create.sql",
-            data.service_id,
+            data.service_id.as_ref(),
             data.kind.clone() as KeyKind,
             key_encrypted,
             data.priority
@@ -89,39 +91,39 @@ impl KeyRepo for PgKeyRepo {
         Ok(key)
     }
 
-    async fn get(&self, id: &Uuid) -> Result<Key> {
-        let key = query_file_as!(Key, "sql/keys/get.sql", &id)
+    async fn get(&self, id: &KeyId) -> Result<Key> {
+        let key = query_file_as!(Key, "sql/keys/get.sql", &id.as_ref())
             .fetch_one(&self.pool)
             .await?;
 
         Ok(key)
     }
 
-    async fn update(&self, id: &Uuid, data: &UpdateKey) -> Result<Key> {
+    async fn update(&self, id: &KeyId, data: &UpdateKey) -> Result<Key> {
         let key = self.get(id).await?;
 
         let is_active = data.is_active.unwrap_or(key.is_active);
 
-        let key = query_file_as!(Key, "sql/keys/update.sql", &id, is_active)
+        let key = query_file_as!(Key, "sql/keys/update.sql", &id.as_ref(), is_active)
             .fetch_one(&self.pool)
             .await?;
 
         Ok(key)
     }
 
-    async fn destroy(&self, id: &Uuid) -> Result<Key> {
-        let key = query_file_as!(Key, "sql/keys/destroy.sql", &id)
+    async fn destroy(&self, id: &KeyId) -> Result<Key> {
+        let key = query_file_as!(Key, "sql/keys/destroy.sql", &id.as_ref())
             .fetch_one(&self.pool)
             .await?;
 
         Ok(key)
     }
 
-    async fn preferred(&self, service_id: &Uuid, kind: &KeyKind) -> Result<Key> {
+    async fn preferred(&self, service_id: &ServiceId, kind: &KeyKind) -> Result<Key> {
         let key = query_file_as!(
             Key,
             "sql/keys/preferred.sql",
-            service_id,
+            service_id.as_ref(),
             kind.clone() as KeyKind
         )
         .fetch_one(&self.pool)

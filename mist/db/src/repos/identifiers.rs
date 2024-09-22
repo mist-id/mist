@@ -1,15 +1,14 @@
 use async_trait::async_trait;
 use common::Result;
 use sqlx::{query_file_as, PgPool};
-use uuid::Uuid;
 
-use crate::models::identifier::{CreateIdentifier, Identifier};
+use crate::models::identifier::{CreateIdentifier, Identifier, IdentifierId};
 
 #[async_trait]
 #[mockall::automock]
 pub trait IdentifierRepo: Send + Sync {
     async fn create(&self, data: &CreateIdentifier) -> Result<Identifier>;
-    async fn get(&self, id: &Uuid) -> Result<Identifier>;
+    async fn get(&self, id: &IdentifierId) -> Result<Identifier>;
     async fn get_by_value(&self, value: &str) -> Result<Identifier>;
 }
 
@@ -29,7 +28,7 @@ impl IdentifierRepo for PgIdentifierRepo {
         let identifier = query_file_as!(
             Identifier,
             "sql/identifiers/create.sql",
-            data.user_id,
+            data.user_id.as_ref(),
             data.value,
         )
         .fetch_one(&self.pool)
@@ -38,8 +37,8 @@ impl IdentifierRepo for PgIdentifierRepo {
         Ok(identifier)
     }
 
-    async fn get(&self, id: &Uuid) -> Result<Identifier> {
-        let identifier = query_file_as!(Identifier, "sql/identifiers/get.sql", id)
+    async fn get(&self, id: &IdentifierId) -> Result<Identifier> {
+        let identifier = query_file_as!(Identifier, "sql/identifiers/get.sql", id.as_ref())
             .fetch_one(&self.pool)
             .await?;
 

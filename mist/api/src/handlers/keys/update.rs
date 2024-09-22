@@ -5,16 +5,15 @@ use axum::{
     Json,
 };
 use common::Result;
-use db::models::key::UpdateKey;
+use db::models::key::{KeyId, UpdateKey};
 use serde::{Deserialize, Serialize};
 use utoipa::{IntoParams, ToSchema};
-use uuid::Uuid;
 
 use crate::state::ApiState;
 
 #[derive(Serialize, Deserialize, IntoParams)]
 pub(crate) struct PathParams {
-    id: Uuid,
+    id: KeyId,
 }
 
 #[derive(Serialize, Deserialize, ToSchema)]
@@ -65,7 +64,10 @@ mod tests {
     };
     use common::env::Environment;
     use db::{
-        models::key::{Key, UpdateKey},
+        models::{
+            key::{Key, UpdateKey},
+            service::ServiceId,
+        },
         repos::{keys::MockKeyRepo, services::MockServiceRepo},
     };
     use mockall::predicate::*;
@@ -77,8 +79,8 @@ mod tests {
 
     #[tokio::test]
     async fn updates() -> Result<()> {
-        let service_id = Uuid::new_v4();
-        let id = Uuid::new_v4();
+        let service_id = ServiceId::new();
+        let id = KeyId::new();
 
         let mut keys = MockKeyRepo::new();
 

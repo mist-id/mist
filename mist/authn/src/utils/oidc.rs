@@ -3,23 +3,19 @@ use common::Result;
 use hmac::{Hmac, Mac};
 use openidconnect::{CsrfToken, Nonce};
 use sha2::Sha256;
-use uuid::Uuid;
 
-pub fn created_signed_state(key: &[u8], csrf: &str, uuid: &Uuid) -> Result<CsrfToken> {
-    let token = CsrfToken::new(format!(
-        "{}:{}:{}",
-        csrf,
-        uuid,
-        sign_state(key, csrf, uuid)?
-    ));
+use crate::session::SessionId;
+
+pub fn created_signed_state(key: &[u8], csrf: &str, id: &SessionId) -> Result<CsrfToken> {
+    let token = CsrfToken::new(format!("{}:{}:{}", csrf, id, sign_state(key, csrf, id)?));
 
     Ok(token)
 }
 
-pub fn sign_state(key: &[u8], csrf: &str, uuid: &Uuid) -> Result<String> {
+pub fn sign_state(key: &[u8], csrf: &str, id: &SessionId) -> Result<String> {
     let mut mac = Hmac::<Sha256>::new_from_slice(key)?;
     mac.update(csrf.as_bytes());
-    mac.update(uuid.as_bytes());
+    mac.update(id.as_ref().as_bytes());
 
     Ok(BASE64_URL_SAFE.encode(mac.finalize().into_bytes()))
 }
