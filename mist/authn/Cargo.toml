@@ -11,6 +11,7 @@ base64 = "0.22.1"
 chrono = { version = "0.4.38", features = ["serde"] }
 common = { path = "../common" }
 db = { path = "../db" }
+derive_more = { version = "1.0.0", features = ["from", "into", "as_ref", "display", "from_str"] }
 dif-presentation-exchange = "0.2.0"
 eyre = "0.6.12"
 fred = { version = "9.2.1", features = ["i-pubsub"] }

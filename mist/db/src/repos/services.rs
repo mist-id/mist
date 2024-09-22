@@ -5,12 +5,11 @@ use common::{
 };
 use secstr::SecVec;
 use sqlx::{query_file_as, PgPool};
-use uuid::Uuid;
 
 use crate::models::{
     definition::{CreateDefinition, Definition},
     key::{Key, KeyKind},
-    service::{CreateService, Service, UpdateService},
+    service::{CreateService, Service, ServiceId, UpdateService},
 };
 
 #[async_trait]
@@ -23,11 +22,11 @@ pub trait ServiceRepo: Send + Sync {
         service: &CreateService,
         definition: &CreateDefinition,
     ) -> Result<Service>;
-    async fn get(&self, id: &Uuid) -> Result<Service>;
+    async fn get(&self, id: &ServiceId) -> Result<Service>;
     async fn get_by_name(&self, name: &str) -> Result<Service>;
-    async fn update(&self, id: &Uuid, date: &UpdateService) -> Result<Service>;
-    async fn destroy(&self, id: &Uuid) -> Result<Service>;
-    async fn get_default_profile(&self, id: &Uuid) -> Result<Definition>;
+    async fn update(&self, id: &ServiceId, date: &UpdateService) -> Result<Service>;
+    async fn destroy(&self, id: &ServiceId) -> Result<Service>;
+    async fn get_default_profile(&self, id: &ServiceId) -> Result<Definition>;
 }
 
 pub struct PgServiceRepo {
@@ -81,7 +80,7 @@ impl ServiceRepo for PgServiceRepo {
         query_file_as!(
             Key,
             "sql/keys/create.sql",
-            service.id,
+            service.id.as_ref(),
             KeyKind::Api as KeyKind,
             key_encrypted,
             1
@@ -98,7 +97,7 @@ impl ServiceRepo for PgServiceRepo {
         query_file_as!(
             Key,
             "sql/keys/create.sql",
-            service.id,
+            service.id.as_ref(),
             KeyKind::Token as KeyKind,
             key_encrypted,
             1
@@ -112,7 +111,7 @@ impl ServiceRepo for PgServiceRepo {
         query_file_as!(
             Definition,
             "sql/definitions/create.sql",
-            service.id,
+            service.id.as_ref(),
             definition.name,
             serde_json::to_value(&definition.value)?,
             definition.is_default
@@ -126,8 +125,8 @@ impl ServiceRepo for PgServiceRepo {
         Ok(service)
     }
 
-    async fn get(&self, id: &Uuid) -> Result<Service> {
-        let profile = query_file_as!(Service, "sql/services/get.sql", &id)
+    async fn get(&self, id: &ServiceId) -> Result<Service> {
+        let profile = query_file_as!(Service, "sql/services/get.sql", &id.as_ref())
             .fetch_one(&self.pool)
             .await?;
 
@@ -142,7 +141,7 @@ impl ServiceRepo for PgServiceRepo {
         Ok(profile)
     }
 
-    async fn update(&self, id: &Uuid, data: &UpdateService) -> Result<Service> {
+    async fn update(&self, id: &ServiceId, data: &UpdateService) -> Result<Service> {
         let service = self.get(id).await?;
 
         let name = data.name.as_deref().unwrap_or(&service.name);
@@ -156,7 +155,7 @@ impl ServiceRepo for PgServiceRepo {
         let profile = query_file_as!(
             Service,
             "sql/services/update.sql",
-            &id,
+            &id.as_ref(),
             &name,
             &redirect_url,
             &logout_url,
@@ -168,18 +167,22 @@ impl ServiceRepo for PgServiceRepo {
         Ok(profile)
     }
 
-    async fn destroy(&self, id: &Uuid) -> Result<Service> {
-        let profile = query_file_as!(Service, "sql/services/destroy.sql", &id)
+    async fn destroy(&self, id: &ServiceId) -> Result<Service> {
+        let profile = query_file_as!(Service, "sql/services/destroy.sql", &id.as_ref())
             .fetch_one(&self.pool)
             .await?;
 
         Ok(profile)
     }
 
-    async fn get_default_profile(&self, id: &Uuid) -> Result<Definition> {
-        let profile = query_file_as!(Definition, "sql/services/get_default_definition.sql", &id)
-            .fetch_one(&self.pool)
-            .await?;
+    async fn get_default_profile(&self, id: &ServiceId) -> Result<Definition> {
+        let profile = query_file_as!(
+            Definition,
+            "sql/services/get_default_definition.sql",
+            &id.as_ref()
+        )
+        .fetch_one(&self.pool)
+        .await?;
 
         Ok(profile)
     }

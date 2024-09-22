@@ -69,13 +69,12 @@ mod tests {
     use axum::{body::Body, extract::Request, http};
     use common::env::Environment;
     use db::{
-        models::service::Service,
+        models::service::{Service, ServiceId},
         repos::{keys::MockKeyRepo, services::MockServiceRepo},
     };
     use mockall::predicate::*;
     use secstr::SecVec;
     use tower::ServiceExt;
-    use uuid::Uuid;
 
     use crate::{handlers::services::router, state::Repos};
 
@@ -85,7 +84,7 @@ mod tests {
     async fn creates() -> Result<()> {
         let master_key =
             SecVec::from("d7456538654523fa190c520767911eb965c561b5d0eed95cd4d8250ec9105f66");
-        let service_id = Uuid::new_v4();
+        let service_id = ServiceId::new();
 
         let mut services = MockServiceRepo::new();
 
@@ -108,7 +107,7 @@ mod tests {
             .once()
             .returning(move |_, _, _| {
                 Box::pin(ready(Ok(Service {
-                    id: service_id,
+                    id: service_id.into(),
                     ..Default::default()
                 })))
             });

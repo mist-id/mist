@@ -6,7 +6,7 @@ use axum::{
 };
 use base64::prelude::*;
 use common::{crypto::decrypt_service_key, Result};
-use db::models::key::KeyKind;
+use db::models::{key::KeyKind, user::UserId};
 use dif_presentation_exchange::PresentationDefinition;
 use fred::types::Expiration;
 use image::{ImageFormat, Luma};
@@ -21,10 +21,9 @@ use tower_cookies::{
     cookie::{time::Duration, SameSite},
     Cookie, Cookies,
 };
-use uuid::Uuid;
 
 use crate::{
-    session::{AuthAction, AuthSession, AuthState, AUTH_SESSION, COOKIE_KEY},
+    session::{AuthAction, AuthSession, AuthState, SessionId, AUTH_SESSION, COOKIE_KEY},
     state::AuthnState,
     utils::oidc,
     views,
@@ -58,23 +57,23 @@ pub(crate) async fn handler(
     // -------------------------------------
 
     let redis_client = state.redis.clone();
-    let session_uuid = match cookies.get(COOKIE_KEY) {
+    let session_id = match cookies.get(COOKIE_KEY) {
         Some(cookie) => Some(
             AUTH_SESSION
                 .get(&redis_client, cookie.value())
                 .await
                 .ok()
-                .and_then(|_| Uuid::from_str(cookie.value()).ok()),
+                .and_then(|_| SessionId::from_str(cookie.value()).ok()),
         ),
         None => None,
     }
     .flatten();
 
-    let session_uuid = match session_uuid {
+    let session_id = match session_id {
         Some(value) => value,
         None => {
-            let session_id = Uuid::new_v4();
-            let user_id = Uuid::new_v4();
+            let session_id = SessionId::new();
+            let user_id = UserId::new();
 
             AUTH_SESSION
                 .set(
@@ -166,12 +165,8 @@ pub(crate) async fn handler(
                 CoreResponseType::Extension("vp_token".into()),
             ]),
             move || {
-                oidc::created_signed_state(
-                    &state_sk,
-                    CsrfToken::new_random().secret(),
-                    &session_uuid,
-                )
-                .unwrap()
+                oidc::created_signed_state(&state_sk, CsrfToken::new_random().secret(), &session_id)
+                    .unwrap()
             },
             move || {
                 oidc::create_signed_nonce(&nonce_sk, openidconnect::Nonce::new_random().secret())

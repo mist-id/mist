@@ -1,12 +1,12 @@
+use db::models::user::UserId;
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
-use uuid::Uuid;
 
 use super::Meta;
 
 #[derive(Serialize, Deserialize)]
 pub(crate) struct Request {
-    pub(crate) id: Uuid,
+    pub(crate) id: UserId,
     pub(crate) identifier: String,
     pub(crate) profile: Map<String, Value>,
 }

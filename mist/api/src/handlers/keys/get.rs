@@ -4,15 +4,15 @@ use axum::{
     Json,
 };
 use common::Result;
+use db::models::key::KeyId;
 use serde::Deserialize;
 use utoipa::IntoParams;
-use uuid::Uuid;
 
 use crate::state::ApiState;
 
 #[derive(Deserialize, IntoParams)]
 pub(crate) struct PathParams {
-    id: Uuid,
+    id: KeyId,
 }
 
 #[utoipa::path(
@@ -45,7 +45,7 @@ mod tests {
     };
     use common::env::Environment;
     use db::{
-        models::key::Key,
+        models::{key::Key, service::ServiceId},
         repos::{keys::MockKeyRepo, services::MockServiceRepo},
     };
     use mockall::predicate::*;
@@ -57,8 +57,8 @@ mod tests {
 
     #[tokio::test]
     async fn gets() -> Result<()> {
-        let service_id = Uuid::new_v4();
-        let id = Uuid::new_v4();
+        let service_id = ServiceId::new();
+        let id = KeyId::new();
 
         let mut keys = MockKeyRepo::new();
 

@@ -6,17 +6,19 @@ use axum::{
 };
 use axum_garde::WithValidation;
 use common::Result;
-use db::models::key::{CreateKey, KeyKind};
+use db::models::{
+    key::{CreateKey, KeyKind},
+    service::ServiceId,
+};
 use garde::Validate;
 use serde::{Deserialize, Serialize};
 use utoipa::{IntoParams, ToSchema};
-use uuid::Uuid;
 
 use crate::state::ApiState;
 
 #[derive(Serialize, Deserialize, IntoParams)]
 pub(crate) struct PathParams {
-    service_id: Uuid,
+    service_id: ServiceId,
 }
 
 #[derive(Serialize, Deserialize, Validate, ToSchema)]
@@ -70,7 +72,6 @@ mod tests {
     use mockall::predicate::*;
     use secstr::SecVec;
     use tower::ServiceExt;
-    use uuid::Uuid;
 
     use crate::{handlers::keys::router, state::Repos};
 
@@ -80,7 +81,7 @@ mod tests {
     async fn creates() -> Result<()> {
         let master_key =
             SecVec::from("57a9f41af0c50e8b6560e5b65ad3b4111fa78a591ab6ce2f87d0b8c18d8ecd9");
-        let service_id = Uuid::new_v4();
+        let service_id = ServiceId::new();
 
         let mut keys = MockKeyRepo::new();
 

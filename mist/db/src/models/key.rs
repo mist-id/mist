@@ -1,13 +1,27 @@
 use bon::Builder;
 use chrono::{DateTime, Utc};
+use derive_more::{AsRef, Display, From, Into};
 use serde::{Deserialize, Serialize};
 use sqlx::prelude::*;
 use utoipa::ToSchema;
 use uuid::Uuid;
 
+use super::service::ServiceId;
+
+#[derive(
+    Default, Clone, Copy, PartialEq, Debug, Display, Serialize, Deserialize, AsRef, From, Into,
+)]
+pub struct KeyId(pub Uuid);
+
+impl KeyId {
+    pub fn new() -> Self {
+        Self(Uuid::new_v4())
+    }
+}
+
 #[derive(Default, Serialize, Deserialize, FromRow, ToSchema)]
 pub struct Key {
-    pub id: Uuid,
+    pub id: KeyId,
     pub kind: KeyKind,
     #[serde(skip_serializing)]
     pub value: Vec<u8>,
@@ -31,7 +45,7 @@ pub enum KeyKind {
 pub struct CreateKey {
     pub kind: KeyKind,
     pub priority: i32,
-    pub service_id: Uuid,
+    pub service_id: ServiceId,
 }
 
 #[derive(Builder, Debug, PartialEq)]
