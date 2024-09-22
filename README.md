@@ -1,4 +1,6 @@
 <div align="center">
+  <img src=".github/logo.png" style="width: 100px; border-radius: 50%" />
+
   <h4><span style="font-weight: normal">Your identity, your data — </span>Anchored in <a href="https://mist.id">Mist</a><h4>
 
   ![License](https://img.shields.io/badge/License-Apache_2.0%2C_MIT-black)
