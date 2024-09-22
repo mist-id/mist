@@ -115,14 +115,18 @@ pub(crate) async fn handler(
                 .get_default_profile(&service.id)
                 .await?;
 
-            let fields = profile
-                .value
-                .fields
-                .iter()
-                .map(|f| json!({ "id": heck::AsSnakeCase(f.name.clone()).to_string(), "name": f.name, "constraints": {} }))
-                .collect::<Vec<_>>();
+            if let Some(profile) = profile {
+                let fields = profile
+                    .value
+                    .fields
+                    .iter()
+                    .map(|f| json!({ "id": heck::AsSnakeCase(f.name.clone()).to_string(), "name": f.name, "constraints": {} }))
+                    .collect::<Vec<_>>();
 
-            fields
+                fields
+            } else {
+                vec![json!({ "id": "skip", "name": "Skip", "constraints": {} })]
+            }
         }
         AuthAction::In => {
             // Ideally, we send no fields for signing in, but Sphereon seems to require we send _something_.

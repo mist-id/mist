@@ -20,13 +20,13 @@ pub trait ServiceRepo: Send + Sync {
         &self,
         master_key: &SecVec<u8>,
         service: &CreateService,
-        definition: &CreateDefinition,
+        definition: &Option<CreateDefinition>,
     ) -> Result<Service>;
     async fn get(&self, id: &ServiceId) -> Result<Service>;
     async fn get_by_name(&self, name: &str) -> Result<Service>;
     async fn update(&self, id: &ServiceId, date: &UpdateService) -> Result<Service>;
     async fn destroy(&self, id: &ServiceId) -> Result<Service>;
-    async fn get_default_profile(&self, id: &ServiceId) -> Result<Definition>;
+    async fn get_default_profile(&self, id: &ServiceId) -> Result<Option<Definition>>;
 }
 
 pub struct PgServiceRepo {
@@ -53,7 +53,7 @@ impl ServiceRepo for PgServiceRepo {
         &self,
         master_key: &SecVec<u8>,
         service: &CreateService,
-        definition: &CreateDefinition,
+        definition: &Option<CreateDefinition>,
     ) -> Result<Service> {
         let mut tx = self.pool.begin().await?;
 
@@ -108,16 +108,18 @@ impl ServiceRepo for PgServiceRepo {
         // Create the default definition.
         // ------------------------------
 
-        query_file_as!(
-            Definition,
-            "sql/definitions/create.sql",
-            service.id.as_ref(),
-            definition.name,
-            serde_json::to_value(&definition.value)?,
-            definition.is_default
-        )
-        .fetch_one(&mut *tx)
-        .await?;
+        if let Some(definition) = definition {
+            query_file_as!(
+                Definition,
+                "sql/definitions/create.sql",
+                service.id.as_ref(),
+                definition.name,
+                serde_json::to_value(&definition.value)?,
+                definition.is_default
+            )
+            .fetch_one(&mut *tx)
+            .await?;
+        }
 
         // All done; commit the transaction.
         tx.commit().await?;
@@ -175,13 +177,13 @@ impl ServiceRepo for PgServiceRepo {
         Ok(profile)
     }
 
-    async fn get_default_profile(&self, id: &ServiceId) -> Result<Definition> {
+    async fn get_default_profile(&self, id: &ServiceId) -> Result<Option<Definition>> {
         let profile = query_file_as!(
             Definition,
             "sql/services/get_default_definition.sql",
             &id.as_ref()
         )
-        .fetch_one(&self.pool)
+        .fetch_optional(&self.pool)
         .await?;
 
         Ok(profile)
