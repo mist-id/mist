@@ -1,5 +1,6 @@
 [workspace]
 members = ["mist/*"]
+exclude = ["demo"]
 resolver = "2"
 
 [workspace.package]

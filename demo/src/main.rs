@@ -9,7 +9,7 @@ use axum::{
 };
 use axum_extra::extract::CookieJar;
 use eyre::Report;
-use maud::{html, Markup};
+use maud::{html, Markup, PreEscaped};
 use reqwest::Client;
 use serde::Deserialize;
 use serde_json::Value;
@@ -36,14 +36,14 @@ async fn main() -> Result<()> {
 }
 
 async fn root(jar: CookieJar, State(env): State<Environment>) -> Result<Markup> {
-    let Some(cookie) = jar.get("id") else {
+    let Some(cookie) = jar.get("mist") else {
         return Ok(login(&env));
     };
 
     // Check if the user is still logged in.
     let response = Client::new()
-        .get(format!("{}/who", env.authn_url))
-        .header("Cookie", format!("id={}", cookie.value()))
+        .get(format!("{}/whoami", env.authn_url))
+        .header("Cookie", format!("mist={}", cookie.value()))
         .send()
         .await?;
 
@@ -55,18 +55,28 @@ async fn root(jar: CookieJar, State(env): State<Environment>) -> Result<Markup> 
     // Get the user session data.
     let user = response.json::<serde_json::Value>().await?;
 
-    Ok(layout(html! {
-        main {
-            pre class="mb-4 p-4 rounded-md text-sm text-white bg-sky-900" {
-                (serde_json::to_string_pretty(&user)?)
-            }
+    let json = serde_json::to_string_pretty(&user)?
+        .lines()
+        .map(|line| html! { pre { code { (line) } } }.into_string())
+        .collect::<Vec<_>>()
+        .join("\n");
 
-            form method="POST" action={ (env.authn_url) "/kill" } {
-                button
-                    class="inline-block rounded border border-indigo-600 bg-indigo-600 px-12 py-3 text-md font-medium text-white hover:bg-white hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
-                    type="submit"
-                    { "👋 Logout" }
+    Ok(layout(html! {
+        script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" crossorigin {}
+        link href="https://unpkg.com/@catppuccin/highlightjs@1.0.0/css/catppuccin-mocha.css" rel="stylesheet" type="text/css";
+
+        script { "hljs.highlightAll();" }
+
+        div class="mb-4 text-xs w-1/3 mockup-code" style="background-color: #1e1e2e;" {
+            pre class="language-none mb-2" data-prefix="$" { code { "curl -X GET " (env.authn_url) "/whoami -H 'Cookie: mist=" (cookie.value()) "' | jq" } }
+
+            div class="mx-2 language-json catppuccin-mocha" {
+                (PreEscaped(json))
             }
+        }
+
+        form method="POST" action={ (env.authn_url) "/ACME/out" } {
+            button class="btn btn-outline btn-neutral" type="submit" { "👋 Sign out" }
         }
     }))
 }
@@ -75,11 +85,14 @@ fn layout(body: Markup) -> Markup {
     html! {
         title { "Sign in" }
 
-        body class="bg-sky-50";
-
         script src="https://cdn.twind.style" crossorigin {}
+        link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css";
 
-        main class="flex flex-col items-center justify-center h-screen p-12" {
+        body class="bg-base-200";
+
+        main class="flex flex-col items-center justify-center h-screen" {
+            h1 class="mb-4 text-5xl font-bold" { "ACME" }
+
             (body)
         }
     }
@@ -87,13 +100,9 @@ fn layout(body: Markup) -> Markup {
 
 fn login(env: &Environment) -> Markup {
     layout(html! {
-        a
-            class="inline-block rounded border border-indigo-600 bg-indigo-600 px-12 py-3 text-md font-medium text-white hover:bg-white hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500"
-            href={ (env.authn_url) "/ACME" }
-            { "Login with Mist" }
-
-        p class="mt-4 text-slate-500" {
-            "What is this? Find out " a target="_blank" class="text-slate-900 hover:underline underline-offset-4" href="https://github.com/mist-id/mist" { "here" } "."
+        div class="join" {
+            a class="btn join-item btn-outline btn-neutral" href={ (env.authn_url) "/ACME/up" } { "Sign up" }
+            a class="btn join-item btn-outline btn-neutral" href={ (env.authn_url) "/ACME/in" } { "Sign in" }
         }
     })
 }
@@ -101,7 +110,7 @@ fn login(env: &Environment) -> Markup {
 async fn hook(State(env): State<Environment>, Json(body): Json<Value>) -> Result<StatusCode> {
     Client::new()
         .post(format!("{}/hook", env.authn_url))
-        .json(&body)
+        .json(&serde_json::json!({ "registration": { "meta": body["meta"], "complete": true } }))
         .send()
         .await?;
 

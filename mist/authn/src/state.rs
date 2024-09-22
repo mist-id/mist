@@ -18,7 +18,7 @@ pub(crate) struct Repos {
 pub(crate) struct AuthnState {
     pub(crate) env: Environment,
     pub(crate) repos: Repos,
-    pub(crate) redis_client: RedisClient,
-    pub(crate) redis_pub_client: RedisClient,
-    pub(crate) redis_sub_client: RedisClient,
+    pub(crate) redis: RedisClient,
+    pub(crate) redis_pub: RedisClient,
+    pub(crate) redis_sub: RedisClient,
 }
