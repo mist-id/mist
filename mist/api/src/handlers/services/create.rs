@@ -23,7 +23,7 @@ pub(crate) struct Payload {
     #[garde(url)]
     webhook_url: String,
     #[garde(skip)]
-    profile: Value,
+    profile: Option<Value>,
 }
 
 #[utoipa::path(
@@ -51,11 +51,13 @@ pub(crate) async fn create_handler(
                 .logout_url(&payload.logout_url)
                 .webhook_url(&payload.webhook_url)
                 .build(),
-            &CreateDefinition::builder()
-                .name("default")
-                .value(payload.profile.clone())
-                .is_default(true)
-                .build(),
+            &payload.profile.as_ref().map(|profile| {
+                CreateDefinition::builder()
+                    .name("default")
+                    .value(profile.clone())
+                    .is_default(true)
+                    .build()
+            }),
         )
         .await?;
 
@@ -98,16 +100,18 @@ mod tests {
                     .logout_url("https://ac.me")
                     .webhook_url("https://ac.me/hooks")
                     .build()),
-                eq(CreateDefinition::builder()
-                    .name("default")
-                    .value(Value::default())
-                    .is_default(true)
-                    .build()),
+                eq(Some(
+                    CreateDefinition::builder()
+                        .name("default")
+                        .value(Value::default())
+                        .is_default(true)
+                        .build(),
+                )),
             )
             .once()
             .returning(move |_, _, _| {
                 Box::pin(ready(Ok(Service {
-                    id: service_id.into(),
+                    id: service_id,
                     ..Default::default()
                 })))
             });

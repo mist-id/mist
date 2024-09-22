@@ -3,10 +3,12 @@ set dotenv-load
 mod db 'dev/just/db.just'
 mod api 'dev/just/api.just'
 
-# Create an ACME service.
-seed local_ip_address:
+service_name := 'ACME'
+
+# Create a service.
+seed local_ip_address name=service_name:
   curlie post -H "Content-Type: application/json" -H "Authorization: ${MASTER_KEY}" --data-raw \
-    '{ "name": "ACME", "redirect_url": "http://{{local_ip_address}}:3000/", "logout_url": "http://{{local_ip_address}}:3000/", "webhook_url": "http://{{local_ip_address}}:3000/hook", "profile": { "fields": [ { "name": "First name", "required": true } ] } }' \
+    '{ "name": "{{name}}", "redirect_url": "http://{{local_ip_address}}:3000/", "logout_url": "http://{{local_ip_address}}:3000/", "webhook_url": "http://{{local_ip_address}}:3000/hook", "profile": { "fields": [ { "name": "First name", "required": true } ] } }' \
     {{local_ip_address}}:9001/services
 
 # Start all Mist services.
