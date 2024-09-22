@@ -11,6 +11,7 @@
     "jq": "latest",
     "just": "latest",
     "libiconv": "latest",
+    "nats-server": "latest",
     "nodejs": "latest",
     "postgresql_16": "latest",
     "pre-commit": "latest",
@@ -21,7 +22,10 @@
     "sqlx-cli": "latest",
     "toml-cli": "latest",
     "darwin.apple_sdk.frameworks.SystemConfiguration": {
-      "platforms": ["x86_64-darwin", "aarch64-darwin"]
+      "platforms": [
+        "x86_64-darwin",
+        "aarch64-darwin"
+      ]
     }
   },
   "shell": {

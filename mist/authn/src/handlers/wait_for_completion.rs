@@ -3,49 +3,51 @@ use std::{convert::Infallible, sync::Arc};
 use axum::{
     extract::State,
     response::{
-        sse::{Event, KeepAlive},
+        sse::{Event as ServerEvent, KeepAlive},
         Sse,
     },
 };
 use common::Result;
 use eyre::OptionExt;
-use fred::prelude::*;
 use tokio::sync::mpsc;
-use tokio_stream::{wrappers::ReceiverStream, Stream};
+use tokio_stream::{wrappers::ReceiverStream, Stream, StreamExt};
 use tower_cookies::Cookies;
 
-use crate::{session::COOKIE_KEY, state::AuthnState, utils::redis::REDIRECT};
+use crate::{
+    events::{get_event_key, Event},
+    session::COOKIE_KEY,
+    state::AuthnState,
+};
 
 pub(crate) async fn handler(
     cookies: Cookies,
     State(state): State<AuthnState>,
-) -> Result<Sse<impl Stream<Item = std::result::Result<Event, Infallible>>>> {
+) -> Result<Sse<impl Stream<Item = std::result::Result<ServerEvent, Infallible>>>> {
     let cookie = cookies.get(COOKIE_KEY).ok_or_eyre("no cookie")?;
 
     let (tx, rx) = mpsc::channel(100);
     let tx_arc = Arc::new(tx);
 
-    // Subscribe to the response channel keyed by the cookie value (the user session ID).
-    state
-        .redis_sub
-        .subscribe(REDIRECT.key(cookie.value()))
+    let mut subscription = state
+        .nats
+        .subscribe(get_event_key(&Event::Redirect, cookie.value()))
         .await?;
 
-    state.redis_sub.on_message(move |_| {
-        let tx_clone = Arc::clone(&tx_arc);
+    tokio::spawn(async move {
+        while (subscription.next().await).is_some() {
+            let tx_clone = Arc::clone(&tx_arc);
 
-        tokio::spawn(async move {
-            let event = Event::default().data("ready");
-
-            // When a mesasge is received, we send a server-sent event to the user's
+            // When a message is received, we send a server-sent event to the user's
             // browser, which will trigger the client to redirect to the services
             // callback URL.
-            if tx_clone.send(Ok(event)).await.is_err() {
-                tracing::error!("failed to send message to chanenl");
-            }
-        });
+            tokio::spawn(async move {
+                let event = ServerEvent::default().data("ready");
 
-        Ok(())
+                if tx_clone.send(Ok(event)).await.is_err() {
+                    tracing::error!("failed to send message to channel");
+                }
+            });
+        }
     });
 
     let stream = ReceiverStream::new(rx);

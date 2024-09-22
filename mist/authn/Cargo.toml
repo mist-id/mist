@@ -6,6 +6,7 @@ publish.workspace = true
 
 [dependencies]
 aes-gcm = "0.10.3"
+async-nats = "0.36.0"
 axum = { version = "0.7.5", features = ["macros"] }
 base64 = "0.22.1"
 chrono = { version = "0.4.38", features = ["serde"] }

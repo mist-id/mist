@@ -1,6 +1,6 @@
 use common::error::Result;
 use fred::prelude::*;
-use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use serde::{de::DeserializeOwned, Serialize};
 use std::marker::PhantomData;
 
 // Creates a typed Redis interface so we can't accidentally put the wrong type into the wrong key.
@@ -53,8 +53,3 @@ impl<T: Serialize + DeserializeOwned> TypedRedisKey<T> {
         Ok(())
     }
 }
-
-#[derive(Serialize, Deserialize)]
-pub(crate) struct Redirect;
-
-pub(crate) const REDIRECT: TypedRedisKey<Redirect> = TypedRedisKey::new("mist-redirect");

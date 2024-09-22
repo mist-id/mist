@@ -1,4 +1,5 @@
 pub mod app;
+mod events;
 mod handlers;
 mod session;
 mod state;

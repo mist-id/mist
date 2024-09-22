@@ -9,6 +9,9 @@ processes:
       postgresql:
         condition: process_healthy
 
+  nats:
+    command: nats-server --trace
+
   docker_compose:
     command: docker-compose -f dev/docker-compose.yml up
 

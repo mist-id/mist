@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use async_nats::Client;
 use axum::Router;
 use common::{env::Environment, Result};
 use db::repos::{
@@ -32,8 +33,7 @@ pub async fn app(env: Environment) -> Router {
     };
 
     let redis_client = create_redis_client(&env).await.unwrap();
-    let redis_pub_client = create_redis_client(&env).await.unwrap();
-    let redis_sub_client = create_redis_client(&env).await.unwrap();
+    let nats_client = create_client(&env).await.unwrap();
 
     Router::new()
         .nest("", handlers::router())
@@ -41,8 +41,7 @@ pub async fn app(env: Environment) -> Router {
             env,
             repos,
             redis: redis_client,
-            redis_pub: redis_pub_client,
-            redis_sub: redis_sub_client,
+            nats: nats_client,
         })
         .layer(CookieManagerLayer::new())
 }
@@ -52,6 +51,12 @@ async fn create_redis_client(env: &Environment) -> Result<RedisClient> {
     let client = RedisClient::new(config, None, None, None);
 
     client.init().await?;
+
+    Ok(client)
+}
+
+async fn create_client(env: &Environment) -> Result<Client> {
+    let client = async_nats::connect(env.nats_url.clone()).await?;
 
     Ok(client)
 }
