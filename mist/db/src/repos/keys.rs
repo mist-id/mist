@@ -3,8 +3,9 @@ use common::{
     crypto::{create_service_key, encrypt_service_key},
     Result,
 };
+use eyre::eyre;
 use secstr::SecVec;
-use sqlx::{query_file, query_file_as, PgPool};
+use sqlx::{query_file, query_file_as, query_file_scalar, PgPool};
 
 use crate::models::{
     key::{CreateKey, Key, KeyId, KeyKind, UpdateKey},
@@ -26,6 +27,7 @@ pub trait KeyRepo: Send + Sync {
     async fn update(&self, id: &KeyId, data: &UpdateKey) -> Result<Key>;
     async fn destroy(&self, id: &KeyId) -> Result<Key>;
     async fn preferred(&self, service_id: &ServiceId, kind: &KeyKind) -> Result<Key>;
+    async fn has_active_key_of_kind(&self, service_id: &ServiceId, kind: &KeyKind) -> Result<bool>;
 }
 
 pub struct PgKeyRepo {
@@ -112,11 +114,21 @@ impl KeyRepo for PgKeyRepo {
     }
 
     async fn destroy(&self, id: &KeyId) -> Result<Key> {
-        let key = query_file_as!(Key, "sql/keys/destroy.sql", &id.as_ref())
+        let key = self.get(id).await?;
+
+        let can_delete = self
+            .has_active_key_of_kind(&key.service_id.into(), &key.kind)
+            .await?;
+
+        if !can_delete {
+            return Err(eyre!("key is in use").into());
+        }
+
+        let deleted = query_file_as!(Key, "sql/keys/destroy.sql", &id.as_ref())
             .fetch_one(&self.pool)
             .await?;
 
-        Ok(key)
+        Ok(deleted)
     }
 
     async fn preferred(&self, service_id: &ServiceId, kind: &KeyKind) -> Result<Key> {
@@ -130,5 +142,18 @@ impl KeyRepo for PgKeyRepo {
         .await?;
 
         Ok(key)
+    }
+
+    async fn has_active_key_of_kind(&self, service_id: &ServiceId, kind: &KeyKind) -> Result<bool> {
+        let exists = query_file_scalar!(
+            "sql/keys/has-active-key-of-kind.sql",
+            service_id.as_ref(),
+            kind.clone() as KeyKind
+        )
+        .fetch_one(&self.pool)
+        .await?
+        .unwrap_or(false);
+
+        Ok(exists)
     }
 }
