@@ -6,6 +6,7 @@
   ![License](https://img.shields.io/badge/License-Apache_2.0%2C_MIT-black)
   [![CI Status](https://img.shields.io/github/actions/workflow/status/mist-id/mist/ci.yml?label=CI)](https://github.com/mist-id/mist/actions/workflows/ci.yml)
   [![Docs](https://img.shields.io/badge/Docs-online-grass)](https://docs.mist.id/)
+  [![GitHub Release](https://img.shields.io/github/v/tag/mist-id/mist?color=white)](https://github.com/mist-id/mist/pkgs/container/mist)
   ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-black)
 </div>
 
