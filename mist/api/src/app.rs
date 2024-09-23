@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
 use axum::{middleware, Router};
-use common::env::Environment;
-use db::repos::{keys::PgKeyRepo, services::PgServiceRepo};
+use mist_common::env::Environment;
+use mist_db::repos::{keys::PgKeyRepo, services::PgServiceRepo};
 use sqlx::postgres::PgPoolOptions;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;

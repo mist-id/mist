@@ -5,11 +5,11 @@ use axum::{
     response::IntoResponse,
 };
 use base64::prelude::*;
-use common::{crypto::decrypt_service_key, Result};
-use db::models::{key::KeyKind, user::UserId};
 use dif_presentation_exchange::PresentationDefinition;
 use fred::types::Expiration;
 use image::{ImageFormat, Luma};
+use mist_common::{crypto::decrypt_service_key, Result};
+use mist_db::models::{key::KeyKind, user::UserId};
 use openidconnect::{
     core::{CoreClient, CoreResponseType},
     AuthUrl, AuthenticationFlow, ClientId, CsrfToken, IssuerUrl, JsonWebKeySet, RedirectUrl, Scope,

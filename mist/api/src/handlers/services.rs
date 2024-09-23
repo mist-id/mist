@@ -5,7 +5,7 @@ mod list;
 mod update;
 
 use axum::{routing, Router};
-use db::models::service::Service;
+use mist_db::models::service::Service;
 use utoipa::OpenApi;
 
 use crate::state::ApiState;

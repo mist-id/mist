@@ -1,11 +1,11 @@
 use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
 use axum_garde::WithValidation;
-use common::Result;
-use db::models::{
+use garde::Validate;
+use mist_common::Result;
+use mist_db::models::{
     definition::{CreateDefinition, Value},
     service::CreateService,
 };
-use garde::Validate;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 
@@ -69,8 +69,8 @@ mod tests {
     use std::{future::ready, sync::Arc};
 
     use axum::{body::Body, extract::Request, http};
-    use common::env::Environment;
-    use db::{
+    use mist_common::env::Environment;
+    use mist_db::{
         models::service::{Service, ServiceId},
         repos::{keys::MockKeyRepo, services::MockServiceRepo},
     };

@@ -18,4 +18,4 @@ x resource:
 
 # Update openapi.json
 open:
-  just api get openapi.json --silent | jq > {{justfile_directory()}}/docs/api/openapi.json
+  just api get openapi.json --silent | jq > {{justfile_directory()}}/docs/api-reference/openapi.json

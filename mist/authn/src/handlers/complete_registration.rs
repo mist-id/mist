@@ -1,9 +1,9 @@
 use axum::{extract::State, response::IntoResponse, Json};
-use common::Result;
-use db::models::{identifier::CreateIdentifier, user::CreateUser};
 use eyre::eyre;
 use fred::prelude::*;
 use http::StatusCode;
+use mist_common::Result;
+use mist_db::models::{identifier::CreateIdentifier, user::CreateUser};
 use serde::Deserialize;
 
 use crate::{

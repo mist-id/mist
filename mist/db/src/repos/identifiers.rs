@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use common::Result;
+use mist_common::Result;
 use sqlx::{query_file_as, PgPool};
 
 use crate::models::identifier::{CreateIdentifier, Identifier, IdentifierId};

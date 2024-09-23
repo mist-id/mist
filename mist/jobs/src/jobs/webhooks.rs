@@ -1,7 +1,7 @@
 use async_nats::jetstream::{publish::PublishAck, Context};
 use bytes::Bytes;
 use chrono::{DateTime, Utc};
-use common::error::Error;
+use mist_common::error::Error;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 

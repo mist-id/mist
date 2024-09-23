@@ -7,8 +7,8 @@ use axum::{
         Sse,
     },
 };
-use common::Result;
 use eyre::OptionExt;
+use mist_common::Result;
 use tokio::sync::mpsc;
 use tokio_stream::{wrappers::ReceiverStream, Stream, StreamExt};
 use tower_cookies::Cookies;

@@ -7,7 +7,6 @@
   [![CI Status](https://img.shields.io/github/actions/workflow/status/mist-id/mist/ci.yml?label=CI)](https://github.com/mist-id/mist/actions/workflows/ci.yml)
   [![Docs](https://img.shields.io/badge/Docs-online-grass)](https://docs.mist.id/)
   ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-black)
-  ![Status](https://img.shields.io/badge/Status-proof%20of%20concept-white)
 </div>
 
 > **Mist** is an open-source Identity and Access Management (IAM) platform designed to bridge the gap between emerging technologies within the Self-Sovereign Identity (SSI) space and traditional web applications.
@@ -35,19 +34,12 @@ Mist aims to:
 ### Current State
 
 I have a working prototype with basic functionality, but it is not yet feature-complete or production-ready. **Breaking changes are expected**.
-Current capabilities include:
 
-- Service creation and management via API
-- Basic authentication flow using SIOPv2 and DIDs
-- User information retrieval via Verifiable Presentations (VPs) and Verifiable Credentials (VCs)
-- Simple user creation and storage within a service
-- Basic session management
-
-Check out the [roadmap](https://github.com/orgs/mist-id/projects/1) for more information on upcoming features.
+Check out the [roadmap](https://github.com/orgs/mist-id/projects/1) to see what's planned.
 
 ## Looking to Contribute?
 
-Check the [development docs](https://docs.mist.id/development/quick-start) for more information on how to get started.
+Check the [contribution docs](https://docs.mist.id/contributing/quick-start) for information on how to get started.
 
 ## Acknowledgements
 

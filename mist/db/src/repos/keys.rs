@@ -1,9 +1,9 @@
 use async_trait::async_trait;
-use common::{
+use eyre::eyre;
+use mist_common::{
     crypto::{create_service_key, encrypt_service_key},
     Result,
 };
-use eyre::eyre;
 use secstr::SecVec;
 use sqlx::{query_file, query_file_as, query_file_scalar, PgPool};
 

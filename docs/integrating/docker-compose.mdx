@@ -1,0 +1,30 @@
+---
+title: Quick start with Docker Compose
+---
+
+You can run Mist alongside your application locally using [Docker Compose](https://docs.docker.com/compose/).
+An [example](https://github.com/mist-id/mist/blob/main/local/docker-compose.yml) is provided.
+
+## Getting it up and running
+
+1. **Set a master key**. Realistically, you'd want to store this somewhere safe.
+
+```bash
+MASTER_KEY=$(openssl rand -hex 32)
+```
+
+2. **Download the example Docker Compose file and run it**.
+
+```bash
+curl -LO https://github.com/mist-id/mist/blob/main/local/docker-compose.yml
+
+docker-compose up
+```
+
+3. **Create a service**. This is the application you want users to sign in to. You can find out more about the service API [here](/api-reference/services).
+
+```bash
+curl -X POST -H "Content-Type: application/json" -H "Authorization: ${MASTER_KEY}" --raw-data \
+    '{ "name": "ACME", "redirect_url": "...", "logout_url": "...", "webhook_url": "..." }' \
+    localhost:9001/services
+```

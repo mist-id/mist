@@ -104,8 +104,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "$ref": "#/components/schemas/ServiceId"
             }
           }
         ],
@@ -137,8 +136,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "$ref": "#/components/schemas/ServiceId"
             }
           }
         ],
@@ -180,8 +178,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "$ref": "#/components/schemas/ServiceId"
             }
           }
         ],
@@ -215,8 +212,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "$ref": "#/components/schemas/ServiceId"
             }
           },
           {
@@ -316,8 +312,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "$ref": "#/components/schemas/ServiceId"
             }
           },
           {
@@ -359,8 +354,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "$ref": "#/components/schemas/KeyId"
             }
           }
         ],
@@ -392,8 +386,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "$ref": "#/components/schemas/KeyId"
             }
           }
         ],
@@ -435,8 +428,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "$ref": "#/components/schemas/KeyId"
             }
           }
         ],
@@ -470,8 +462,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "$ref": "#/components/schemas/KeyId"
             }
           }
         ],
@@ -512,8 +503,7 @@
           "name",
           "redirect_url",
           "logout_url",
-          "webhook_url",
-          "profile"
+          "webhook_url"
         ],
         "properties": {
           "logout_url": {
@@ -548,8 +538,7 @@
             "format": "date-time"
           },
           "id": {
-            "type": "string",
-            "format": "uuid"
+            "$ref": "#/components/schemas/KeyId"
           },
           "is_active": {
             "type": "boolean"
@@ -595,8 +584,7 @@
             "format": "date-time"
           },
           "id": {
-            "type": "string",
-            "format": "uuid"
+            "$ref": "#/components/schemas/ServiceId"
           },
           "logout_url": {
             "type": "string"
