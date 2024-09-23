@@ -4,8 +4,8 @@ use axum::{
     response::IntoResponse,
     Json,
 };
-use common::Result;
-use db::models::key::KeyId;
+use mist_common::Result;
+use mist_db::models::key::KeyId;
 use serde::{Deserialize, Serialize};
 use utoipa::IntoParams;
 
@@ -44,8 +44,8 @@ mod tests {
         body::Body,
         http::{self, Request, StatusCode},
     };
-    use common::env::Environment;
-    use db::{
+    use mist_common::env::Environment;
+    use mist_db::{
         models::{key::Key, service::ServiceId},
         repos::{keys::MockKeyRepo, services::MockServiceRepo},
     };

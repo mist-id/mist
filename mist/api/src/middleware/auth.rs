@@ -4,9 +4,9 @@ use axum::{
     middleware::Next,
     response::{IntoResponse, Response},
 };
-use common::{crypto::decrypt_service_key, error::Result};
 use constant_time_eq::constant_time_eq;
-use db::models::{key::KeyKind, service::ServiceId};
+use mist_common::{crypto::decrypt_service_key, error::Result};
+use mist_db::models::{key::KeyKind, service::ServiceId};
 use serde::Deserialize;
 
 use crate::state::ApiState;

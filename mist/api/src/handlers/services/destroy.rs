@@ -3,8 +3,8 @@ use axum::{
     response::IntoResponse,
     Json,
 };
-use common::Result;
-use db::models::service::ServiceId;
+use mist_common::Result;
+use mist_db::models::service::ServiceId;
 use serde::Deserialize;
 use utoipa::IntoParams;
 
@@ -44,7 +44,7 @@ mod tests {
         extract::Request,
         http::{self, StatusCode},
     };
-    use db::{
+    use mist_db::{
         models::service::Service,
         repos::{keys::MockKeyRepo, services::MockServiceRepo},
     };
@@ -68,7 +68,7 @@ mod tests {
             .returning(|_| Box::pin(ready(Ok(Service::default()))));
 
         let app = router().with_state(ApiState {
-            env: common::env::Environment::default(),
+            env: mist_common::env::Environment::default(),
             repos: Repos {
                 services: Arc::new(services),
                 keys: Arc::new(MockKeyRepo::new()),

@@ -1,5 +1,5 @@
 [package]
-name = "common"
+name = "mist_common"
 version.workspace = true
 edition.workspace = true
 publish.workspace = true

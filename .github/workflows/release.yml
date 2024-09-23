@@ -1,0 +1,30 @@
+name: Release
+
+on: workflow_dispatch
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo install cargo-edit
+      - id: release
+        uses: oknozor/cocogitto-action@v3
+        with:
+          release: true
+      - run: cog changelog --at ${{ steps.release.outputs.version }}
+      - uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GHCR_TOKEN}}
+      - run: docker build -t ghcr.io/mist-id/mist:${{ steps.release.outputs.version }} -t ghcr.io/mist-id/mist:latest -f deploy/Dockerfile .
+      - run: |
+          docker push ghcr.io/mist-id/mist:${{ steps.release.outputs.version }}
+          docker push ghcr.io/mist-id/mist:latest

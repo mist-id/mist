@@ -1,6 +1,6 @@
-use common::redis::TypedRedis;
-use db::models::{identifier::IdentifierId, service::ServiceId, user::UserId};
 use derive_more::{AsRef, Display, From, FromStr, Into};
+use mist_common::redis::TypedRedis;
+use mist_db::models::{identifier::IdentifierId, service::ServiceId, user::UserId};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 

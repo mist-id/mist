@@ -1,17 +1,17 @@
 [package]
-name = "runner"
+name = "mist_runner"
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
 
 [dependencies]
-api = { path = "../api" }
-authn = { path = "../authn" }
 axum = "0.7.5"
 color-eyre = "0.6.3"
-common = { path = "../common" }
 envy = "0.4.2"
-jobs = { path = "../jobs" }
+mist_api = { path = "../api" }
+mist_authn = { path = "../authn" }
+mist_common = { path = "../common" }
+mist_jobs = { path = "../jobs" }
 sqlx = { version = "0.8.2", features = ["migrate", "postgres"] }
 tokio = { version = "1.40.0", features = ["rt"] }
 tower-http = { version = "0.6.0", features = ["trace"] }

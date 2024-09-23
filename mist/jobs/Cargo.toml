@@ -1,5 +1,5 @@
 [package]
-name = "jobs"
+name = "mist_jobs"
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
@@ -8,8 +8,8 @@ publish.workspace = true
 async-nats = "0.36.0"
 bytes = "1.7.2"
 chrono = { version = "0.4.38", features = ["serde"] }
-common = { path = "../common" }
 futures = "0.3.30"
+mist_common = { path = "../common" }
 reqwest = { version = "0.12.7", features = ["json"] }
 serde = { version = "1.0.210", features = ["derive"] }
 serde_json = "1.0.128"

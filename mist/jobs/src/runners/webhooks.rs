@@ -4,8 +4,8 @@ use async_nats::jetstream::{
     consumer,
     stream::{Config, RetentionPolicy},
 };
-use common::{env::Environment, error::Result};
 use futures::StreamExt;
+use mist_common::{env::Environment, error::Result};
 use tokio::task::JoinHandle;
 
 use crate::jobs::webhooks::{Webhook, CONSUMER_NAME, STREAM_NAME};

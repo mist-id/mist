@@ -1,5 +1,5 @@
-use db::models::service::Service;
 use maud::{html, Markup, PreEscaped};
+use mist_db::models::service::Service;
 
 pub(crate) fn view(service: &Service, authn_url: &str, qr: &str) -> Markup {
     html! {

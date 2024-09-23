@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
 use axum::extract::FromRef;
-use common::env::Environment;
-use db::repos::{keys::KeyRepo, services::ServiceRepo};
+use mist_common::env::Environment;
+use mist_db::repos::{keys::KeyRepo, services::ServiceRepo};
 
 #[derive(Clone)]
 pub(crate) struct Repos {

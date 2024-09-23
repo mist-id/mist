@@ -17,6 +17,14 @@ services:
     volumes:
       - redis_data:/data
 
+  nats:
+    image: nats:latest
+    ports:
+      - "4222:4222"
+    command: ["--jetstream"]
+    volumes:
+      - nats_data:/data
+
   uni-resolver-web:
     image: universalresolver/uni-resolver-web:latest
     ports:
@@ -28,7 +36,7 @@ services:
       - "9051:8080"
 
   mist:
-    image: mist:latest
+    image: mist-id/mist:latest
     ports:
       - "9001:9001"
       - "9002:9002"
@@ -37,11 +45,14 @@ services:
       - postgres
     environment:
       - MASTER_KEY=${MASTER_KEY}
+      - AUTHN_URL=http://localhost:9002
       - POSTGRES_URL=postgres://casper:casper@postgres:5432/mist
       - REDIS_URL=redis://redis:6379
-      - RESOLVER_HOST=https://dev.uniresolver.io/1.0/identifiers
+      - NATS_URL=nats://nats:4222
+      - RESOLVER_HOST=http://localhost:9050
       - DEVELOPMENT=true
 
 volumes:
   postgres_data:
   redis_data:
+  nats_data:

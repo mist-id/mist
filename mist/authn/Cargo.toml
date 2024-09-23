@@ -1,5 +1,5 @@
 [package]
-name = "authn"
+name = "mist_authn"
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
@@ -10,8 +10,6 @@ async-nats = "0.36.0"
 axum = { version = "0.7.5", features = ["macros"] }
 base64 = "0.22.1"
 chrono = { version = "0.4.38", features = ["serde"] }
-common = { path = "../common" }
-db = { path = "../db" }
 derive_more = { version = "1.0.0", features = [
     "from",
     "into",
@@ -27,9 +25,11 @@ hex = "0.4.3"
 hmac = "0.12.1"
 http = "1.1.0"
 image = "0.25.2"
-jobs = { path = "../jobs" }
 jsonwebtoken = "9.3.0"
 maud = { version = "0.26.0", features = ["axum"] }
+mist_common = { path = "../common" }
+mist_db = { path = "../db" }
+mist_jobs = { path = "../jobs" }
 openidconnect = "3.5.0"
 qrcode = "0.14.1"
 reqwest = { version = "0.12.7", features = ["json"] }

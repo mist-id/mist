@@ -4,9 +4,9 @@ use axum::{
     Json,
 };
 use axum_garde::WithValidation;
-use common::Result;
-use db::models::service::{ServiceId, UpdateService};
 use garde::Validate;
+use mist_common::Result;
+use mist_db::models::service::{ServiceId, UpdateService};
 use serde::{Deserialize, Serialize};
 use utoipa::{IntoParams, ToSchema};
 
@@ -72,8 +72,8 @@ mod tests {
         body::Body,
         http::{self, Request, StatusCode},
     };
-    use common::env::Environment;
-    use db::{
+    use mist_common::env::Environment;
+    use mist_db::{
         models::service::{Service, UpdateService},
         repos::{keys::MockKeyRepo, services::MockServiceRepo},
     };

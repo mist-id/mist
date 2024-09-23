@@ -1,6 +1,6 @@
 use base64::prelude::*;
-use common::Result;
 use hmac::{Hmac, Mac};
+use mist_common::Result;
 use openidconnect::{CsrfToken, Nonce};
 use sha2::Sha256;
 

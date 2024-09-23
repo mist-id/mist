@@ -1,5 +1,5 @@
 [package]
-name = "db"
+name = "mist_db"
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
@@ -8,25 +8,25 @@ publish.workspace = true
 async-trait = "0.1.82"
 bon = "2.2.1"
 chrono = { version = "0.4.38", features = ["serde"] }
-common = { path = "../common" }
 derive_more = { version = "1.0.0", features = [
-  "as_ref",
-  "display",
-  "from",
-  "into",
+    "as_ref",
+    "display",
+    "from",
+    "into",
 ] }
 eyre = "0.6.12"
 hex = "0.4.3"
+mist_common = { path = "../common" }
 mockall = "0.13.0"
 secstr = "0.5.1"
 serde = { version = "1.0.209", features = ["derive"] }
 serde_json = "1.0.128"
 sqlx = { version = "0.8.2", features = [
-  "runtime-tokio",
-  "tls-rustls-ring",
-  "postgres",
-  "uuid",
-  "chrono",
+    "runtime-tokio",
+    "tls-rustls-ring",
+    "postgres",
+    "uuid",
+    "chrono",
 ] }
 utoipa = { version = "5.0.0-beta.0", features = ["chrono", "uuid"] }
 uuid = { version = "1.10.0", features = ["serde", "v4"] }

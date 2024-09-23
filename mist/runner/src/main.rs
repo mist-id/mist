@@ -1,7 +1,7 @@
 use std::net::SocketAddr;
 
-use common::{env::Environment, Result};
-use jobs::runners::webhooks;
+use mist_common::{env::Environment, Result};
+use mist_jobs::runners::webhooks;
 use sqlx::postgres::PgPoolOptions;
 use tokio::net::TcpListener;
 use tower_http::trace::TraceLayer;
@@ -27,7 +27,7 @@ async fn main() -> Result<()> {
 
         axum::serve(
             listener,
-            api::app::app(api_env)
+            mist_api::app::app(api_env)
                 .await
                 .layer(TraceLayer::new_for_http()),
         )
@@ -42,7 +42,7 @@ async fn main() -> Result<()> {
 
         axum::serve(
             listener,
-            authn::app::app(authn_env)
+            mist_authn::app::app(authn_env)
                 .await
                 .layer(TraceLayer::new_for_http()),
         )

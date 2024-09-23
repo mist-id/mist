@@ -7,7 +7,7 @@ mod update;
 mod value;
 
 use axum::{routing, Router};
-use db::models::key::{Key, KeyKind};
+use mist_db::models::key::{Key, KeyKind};
 use utoipa::OpenApi;
 
 use crate::state::ApiState;

@@ -2,8 +2,8 @@ use axum::{
     extract::State,
     response::{IntoResponse, Redirect},
 };
-use common::Result;
 use eyre::OptionExt;
+use mist_common::Result;
 use tower_cookies::Cookies;
 
 use crate::{

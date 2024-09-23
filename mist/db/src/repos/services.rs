@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use common::{
+use mist_common::{
     crypto::{create_service_key, encrypt_service_key},
     Result,
 };

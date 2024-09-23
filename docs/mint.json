@@ -15,18 +15,12 @@
       "to": "#1f2937"
     }
   },
-  "tabs": [
-    {
-      "name": "API Reference",
-      "openapi": "/api-reference/openapi.json",
-      "url": "api-reference"
-    }
-  ],
   "anchors": [
     {
-      "name": "Documentation",
-      "icon": "book-open-cover",
-      "url": "https://docs.mist.id"
+      "name": "API Reference",
+      "icon": "code",
+      "openapi": "/api-reference/openapi.json",
+      "url": "api-reference"
     },
     {
       "name": "Community",
@@ -45,19 +39,27 @@
       "pages": ["introduction"]
     },
     {
-      "group": "Development",
+      "group": "Integrating",
+      "pages": ["integrating/docker-compose"]
+    },
+    {
+      "group": "Deploying",
+      "pages": ["deploying/docker"]
+    },
+    {
+      "group": "Contributing",
       "pages": [
-        "development/quick-start",
-        "development/guidelines",
+        "contributing/set-up",
+        "contributing/guidelines",
         {
           "group": "Overview",
           "pages": [
-            "development/overview/platform-architecture",
-            "development/overview/authentication-flow",
-            "development/overview/service-keys"
+            "contributing/overview/platform-architecture",
+            "contributing/overview/authentication-flow",
+            "contributing/overview/service-keys"
           ]
         },
-        "development/reading-material"
+        "contributing/reading-material"
       ]
     }
   ]

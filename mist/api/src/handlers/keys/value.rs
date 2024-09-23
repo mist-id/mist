@@ -2,8 +2,8 @@ use axum::{
     extract::{Path, State},
     response::IntoResponse,
 };
-use common::{crypto::decrypt_service_key, Result};
-use db::models::key::KeyId;
+use mist_common::{crypto::decrypt_service_key, Result};
+use mist_db::models::key::KeyId;
 use serde::Deserialize;
 use utoipa::IntoParams;
 
@@ -44,11 +44,11 @@ mod tests {
         body::Body,
         http::{self, Request, StatusCode},
     };
-    use common::{
+    use mist_common::{
         crypto::{create_service_key, encrypt_service_key},
         env::Environment,
     };
-    use db::{
+    use mist_db::{
         models::{key::Key, service::ServiceId},
         repos::{keys::MockKeyRepo, services::MockServiceRepo},
     };

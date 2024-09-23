@@ -1,8 +1,8 @@
 use axum::{extract::State, response::IntoResponse};
-use common::Result;
-use db::models::user::UserId;
 use eyre::OptionExt;
 use http::StatusCode;
+use mist_common::Result;
+use mist_db::models::user::UserId;
 use serde::Serialize;
 use tower_cookies::Cookies;
 

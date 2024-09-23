@@ -4,8 +4,8 @@ use axum::{
     response::IntoResponse,
     Json,
 };
-use common::Result;
-use db::models::key::{KeyId, UpdateKey};
+use mist_common::Result;
+use mist_db::models::key::{KeyId, UpdateKey};
 use serde::{Deserialize, Serialize};
 use utoipa::{IntoParams, ToSchema};
 
@@ -62,8 +62,8 @@ mod tests {
         body::Body,
         http::{self, Request, StatusCode},
     };
-    use common::env::Environment;
-    use db::{
+    use mist_common::env::Environment;
+    use mist_db::{
         models::{
             key::{Key, UpdateKey},
             service::ServiceId,
