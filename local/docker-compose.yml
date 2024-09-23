@@ -36,7 +36,7 @@ services:
       - "9051:8080"
 
   mist:
-    image: mist-id/mist:latest
+    image: ghcr.io/mist-id/mist:latest
     ports:
       - "9001:9001"
       - "9002:9002"
