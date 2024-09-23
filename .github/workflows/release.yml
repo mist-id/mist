@@ -21,7 +21,7 @@ jobs:
           git-user: "Casper"
           git-user-email: "open.source@mist.id"
       - run: cog changelog --at ${{ steps.release.outputs.version }}
-      - uses: docker/login-action@v1
+      - uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{github.actor}}
