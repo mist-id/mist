@@ -1,22 +1,24 @@
 version: "0.5"
+
 is_strict: true
 
 processes:
-  init_postgres:
+  init:
     namespace: init
-    command: sh dev/devbox/init-postgres.sh
+    command: |
+      sh dev/devbox/init/postgres.sh
     depends_on:
       postgresql:
         condition: process_healthy
 
   nats:
-    command: nats-server --trace
+    command: nats-server --jetstream
 
-  docker_compose:
+  docker:
     command: docker-compose -f dev/docker-compose.yml up
 
   mist:
-    command: RUST_LOG=tower_http=trace cargo watch -x run -p runner
+    command: RUST_LOG=error,mist=debug,tower_http=trace,async_nats=warn cargo watch -x run -p runner
     depends_on:
-      init_postgres:
+      init:
         condition: process_completed_successfully

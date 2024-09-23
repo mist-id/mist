@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use async_nats::Client;
+use async_nats::{jetstream::Context, Client};
 use axum::Router;
 use common::{env::Environment, Result};
 use db::repos::{
@@ -32,16 +32,17 @@ pub async fn app(env: Environment) -> Router {
         identifiers: Arc::new(PgIdentifierRepo::new(postgres.clone())),
     };
 
-    let redis_client = create_redis_client(&env).await.unwrap();
-    let nats_client = create_client(&env).await.unwrap();
+    let redis = create_redis_client(&env).await.unwrap();
+    let (nats, jetstream) = create_nas_client(&env).await.unwrap();
 
     Router::new()
         .nest("", handlers::router())
         .with_state(AuthnState {
             env,
             repos,
-            redis: redis_client,
-            nats: nats_client,
+            redis,
+            nats,
+            jetstream,
         })
         .layer(CookieManagerLayer::new())
 }
@@ -55,8 +56,9 @@ async fn create_redis_client(env: &Environment) -> Result<RedisClient> {
     Ok(client)
 }
 
-async fn create_client(env: &Environment) -> Result<Client> {
+async fn create_nas_client(env: &Environment) -> Result<(Client, Context)> {
     let client = async_nats::connect(env.nats_url.clone()).await?;
+    let jetstream = async_nats::jetstream::new(client.clone());
 
-    Ok(client)
+    Ok((client, jetstream))
 }
