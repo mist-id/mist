@@ -1,7 +1,3 @@
 *
 !Cargo.*
-!api/
-!authn/
-!db/
-!common/
-!runner/
+!mist/
