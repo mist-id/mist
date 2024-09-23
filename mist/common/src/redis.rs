@@ -1,15 +1,15 @@
-use common::error::Result;
 use fred::prelude::*;
 use serde::{de::DeserializeOwned, Serialize};
 use std::marker::PhantomData;
 
-// Creates a typed Redis interface so we can't accidentally put the wrong type into the wrong key.
-pub(crate) struct TypedRedisKey<T> {
+use crate::error::Result;
+
+pub struct TypedRedis<T> {
     prefix: &'static str,
     phantom: PhantomData<T>,
 }
 
-impl<T: Serialize + DeserializeOwned> TypedRedisKey<T> {
+impl<T: Serialize + DeserializeOwned> TypedRedis<T> {
     pub const fn new(prefix: &'static str) -> Self {
         Self {
             prefix,

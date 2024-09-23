@@ -1,32 +1,33 @@
 {
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.12.0/.schema/devbox.schema.json",
   "packages": {
-    "act": "latest",
-    "cargo-watch": "latest",
-    "cargo-udeps": "latest",
-    "cocogitto": "latest",
-    "curlie": "latest",
-    "dotenvx": "latest",
-    "gum": "latest",
-    "jq": "latest",
-    "just": "latest",
-    "libiconv": "latest",
-    "nats-server": "latest",
-    "nodejs": "latest",
+    "act":           "latest",
+    "cargo-watch":   "latest",
+    "cargo-udeps":   "latest",
+    "cocogitto":     "latest",
+    "curlie":        "latest",
+    "dotenvx":       "latest",
+    "gum":           "latest",
+    "jq":            "latest",
+    "just":          "latest",
+    "libiconv":      "latest",
+    "nats-server":   "latest",
+    "nodejs":        "latest",
     "postgresql_16": "latest",
-    "pre-commit": "latest",
-    "redis": "latest",
+    "pre-commit":    "latest",
+    "redis":         "latest",
     "rust-analyzer": "latest",
-    "rustup": "latest",
-    "sqlfluff": "latest",
-    "sqlx-cli": "latest",
-    "toml-cli": "latest",
+    "rustup":        "latest",
+    "sqlfluff":      "latest",
+    "sqlx-cli":      "latest",
+    "toml-cli":      "latest",
     "darwin.apple_sdk.frameworks.SystemConfiguration": {
       "platforms": [
         "x86_64-darwin",
         "aarch64-darwin"
       ]
-    }
+    },
+    "natscli": "latest"
   },
   "shell": {
     "init_hook": [

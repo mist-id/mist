@@ -12,7 +12,7 @@ use eyre::Report;
 use maud::{html, Markup, PreEscaped};
 use reqwest::Client;
 use serde::Deserialize;
-use serde_json::Value;
+use serde_json::{Map, Value};
 
 #[derive(Clone, Deserialize)]
 struct Environment {
@@ -107,10 +107,14 @@ fn login(env: &Environment) -> Markup {
     })
 }
 
-async fn hook(State(env): State<Environment>, Json(body): Json<Value>) -> Result<StatusCode> {
+async fn hook(State(env): State<Environment>, Json(body): Json<String>) -> Result<StatusCode> {
+    let body = serde_json::from_str::<Map<String, Value>>(&body)?;
+
+    // Validate the request, create a user, etc.
+
     Client::new()
-        .post(format!("{}/hook", env.authn_url))
-        .json(&serde_json::json!({ "registration": { "meta": body["meta"], "complete": true } }))
+        .post(format!("{}/complete", env.authn_url))
+        .json(&serde_json::json!({ "session_id": body["data"]["session_id"] }))
         .send()
         .await?;
 

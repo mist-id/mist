@@ -1,9 +1,8 @@
+use common::redis::TypedRedis;
 use db::models::{identifier::IdentifierId, service::ServiceId, user::UserId};
 use derive_more::{AsRef, Display, From, FromStr, Into};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-
-use crate::utils::redis::TypedRedisKey;
 
 pub(crate) const COOKIE_KEY: &str = "mist";
 
@@ -27,6 +26,7 @@ pub(crate) struct AuthSession {
 #[serde(rename_all = "lowercase")]
 pub(crate) enum AuthState {
     Authenticating { action: AuthAction },
+    Registering { identifier: String },
     Authenticated { identifier_id: IdentifierId },
 }
 
@@ -37,4 +37,4 @@ pub(crate) enum AuthAction {
     In,
 }
 
-pub(crate) static AUTH_SESSION: TypedRedisKey<AuthSession> = TypedRedisKey::new("mist-auth");
+pub(crate) static AUTH_SESSION: TypedRedis<AuthSession> = TypedRedis::new("mist-auth");

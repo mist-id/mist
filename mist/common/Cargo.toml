@@ -8,8 +8,10 @@ publish.workspace = true
 aes-gcm = { version = "0.10.3", features = ["std"] }
 axum = "0.7.5"
 eyre = "0.6.12"
+fred = "9.2.1"
 hex = "0.4.3"
 rand = "0.8.5"
 secstr = { version = "0.5.1", features = ["serde"] }
 serde = { version = "1.0.209", features = ["derive"] }
+serde_json = "1.0.128"
 sqlx = "0.8.2"

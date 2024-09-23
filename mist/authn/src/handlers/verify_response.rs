@@ -3,12 +3,13 @@ use std::str::FromStr;
 use axum::{extract::State, response::IntoResponse, Form};
 use chrono::Utc;
 use common::{crypto::decrypt_service_key, Result};
-use db::models::{key::KeyKind, service::Service};
+use db::models::{key::KeyKind, service::Service, user::UserId};
 use eyre::{eyre, OptionExt};
 use fred::prelude::*;
 use http::StatusCode;
+use jobs::jobs;
 use openidconnect::core::CoreIdTokenClaims;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
 use ssi::{did::VerificationMethod, did_resolve::ResolutionResult, jwk::JWK, vc::OneOrMany};
 
@@ -20,8 +21,15 @@ use crate::{
         oidc,
         sphereon::{SphereonCredentialWrapper, SphereonTokenWrapper},
     },
-    webhooks::{self, HookData, Webhook, HOOK_DATA},
 };
+
+#[derive(Serialize, Deserialize)]
+pub(crate) struct RegistrationData {
+    pub(crate) id: UserId,
+    pub(crate) identifier: String,
+    pub(crate) profile: Map<String, Value>,
+    pub(crate) session_id: SessionId,
+}
 
 #[derive(Deserialize)]
 pub(crate) struct VerifyBody {
@@ -46,7 +54,7 @@ pub(crate) async fn handler(
     let session = AUTH_SESSION.get(&state.redis, received_session_id).await?;
 
     let AuthState::Authenticating { action } = &session.state else {
-        return Ok(StatusCode::UNAUTHORIZED.into_response());
+        return Ok(StatusCode::NOT_FOUND.into_response());
     };
 
     // Get the services' token key for verifying the state and nonce.
@@ -206,8 +214,8 @@ pub(crate) async fn handler(
         AuthAction::Up => {
             handle_up(
                 &state,
-                &session,
                 received_session_id,
+                &session,
                 &service,
                 jwk,
                 &did,
@@ -223,8 +231,8 @@ pub(crate) async fn handler(
 
 async fn handle_up(
     state: &AuthnState,
-    session: &AuthSession,
     session_id: &str,
+    session: &AuthSession,
     service: &Service,
     jwk: &JWK,
     did: &str,
@@ -247,37 +255,38 @@ async fn handle_up(
     // Send user data to the services' webhook endpoint so they can create the user on their end.
     // ------------------------------------------------------------------------------------------
 
-    let hook = Webhook::new(
-        webhooks::Kind::Registration,
-        webhooks::Request::Registration(webhooks::registration::Request {
-            id: session.user_id,
-            identifier: did.into(),
-            profile: json_map,
-        }),
-    );
-
-    HOOK_DATA
+    AUTH_SESSION
         .set(
             &state.redis,
-            &hook.meta.id.to_string(),
-            &HookData {
-                session_id: SessionId::from_str(session_id)?,
-                identifier: did.into(),
+            session_id,
+            &AuthSession {
+                service_id: session.service_id,
+                user_id: session.user_id,
+                state: AuthState::Registering {
+                    identifier: did.into(),
+                },
             },
             Expiration::EX(60 * 5),
         )
         .await?;
 
-    reqwest::Client::new()
-        .post(&service.webhook_url)
-        .json(&hook)
-        .send()
-        .await?;
+    jobs::Webhook::publish(
+        &state.jetstream,
+        &service.webhook_url,
+        "registration",
+        &RegistrationData {
+            id: session.user_id,
+            identifier: did.into(),
+            profile: json_map,
+            session_id: SessionId::from_str(session_id)?,
+        },
+    )
+    .await?;
 
     Ok(())
 
-    // ------------------------------------------------------------------------------------
-    // When the server responds, we'll continue the process in the `handle_webhook` handler.
+    // -------------------------------------------------------------------------------------------
+    // When the server responds, we'll continue the process in the `complete_registration` handler.
 }
 
 async fn handle_in(

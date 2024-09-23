@@ -20,6 +20,7 @@ graph TD
       api
       authn
       didc
+      jobs
     end
 
     authz
@@ -34,6 +35,7 @@ graph TD
   authn --> db
   ssi --> db
   didc --> db
+  jobs --> db
   db --> database[(Database)]
 
   classDef group fill:#f8fafc,stroke:#020617;
@@ -46,7 +48,7 @@ graph TD
 
   class components,apps group;
   class runner runner;
-  class api,authn app-current;
+  class api,authn,jobs app-current;
   class didc app-future;
   class db component-current;
   class authz,ssi component-future;
@@ -65,3 +67,4 @@ Each component is a Rust crate that lives in the Mist monorepo.
 | **api**    | The REST API, used by the Service to manage the Mist instance.                           |
 | **authn**  | The authentication service, responsible for user authentication.                         |
 | **db**     | The data layer, used by all components to store data.                                    |
+| **jobs**   | Handles the execution of background jobs.                                                |

@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use async_nats::Client;
+use async_nats::{jetstream::Context, Client};
 use common::env::Environment;
 use db::repos::{
     identifiers::IdentifierRepo, keys::KeyRepo, services::ServiceRepo, users::UserRepo,
@@ -21,4 +21,5 @@ pub(crate) struct AuthnState {
     pub(crate) repos: Repos,
     pub(crate) redis: RedisClient,
     pub(crate) nats: Client,
+    pub(crate) jetstream: Context,
 }

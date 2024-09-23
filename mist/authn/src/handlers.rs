@@ -1,8 +1,8 @@
+mod complete_registration;
 mod kill_session;
 mod start_auth;
 mod verify_response;
 mod wait_for_completion;
-mod webhook;
 mod whoami;
 
 use axum::{routing, Router};
@@ -15,6 +15,6 @@ pub(crate) fn router() -> Router<AuthnState> {
         .route("/:service_name/out", routing::post(kill_session::handler))
         .route("/waiting", routing::get(wait_for_completion::handler))
         .route("/auth", routing::post(verify_response::handler))
-        .route("/hook", routing::post(webhook::handler))
+        .route("/complete", routing::post(complete_registration::handler))
         .route("/whoami", routing::get(whoami::handler))
 }
