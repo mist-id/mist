@@ -19,7 +19,7 @@ jobs:
         with:
           release: true
       - run: cog changelog --at ${{ steps.release.outputs.version }}
-      - uses: docker/login-action@v1
+      - uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{github.actor}}
