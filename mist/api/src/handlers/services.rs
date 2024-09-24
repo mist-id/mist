@@ -5,7 +5,7 @@ mod list;
 mod update;
 
 use axum::{routing, Router};
-use mist_db::models::service::Service;
+use mist_db::models::service::{Service, ServiceId};
 use utoipa::OpenApi;
 
 use crate::state::ApiState;
@@ -19,7 +19,7 @@ use crate::state::ApiState;
         update::update_handler,
         destroy::destroy_handler
     ),
-    components(schemas(Service, create::Payload, update::Payload))
+    components(schemas(ServiceId, Service, create::Payload, update::Payload))
 )]
 pub(crate) struct Api;
 

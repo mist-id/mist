@@ -7,7 +7,18 @@ use utoipa::ToSchema;
 use uuid::Uuid;
 
 #[derive(
-    Default, Clone, Copy, PartialEq, Debug, Display, Serialize, Deserialize, AsRef, From, Into,
+    Default,
+    Clone,
+    Copy,
+    PartialEq,
+    Debug,
+    Display,
+    Serialize,
+    Deserialize,
+    AsRef,
+    From,
+    Into,
+    ToSchema,
 )]
 pub struct ServiceId(pub Uuid);
 
