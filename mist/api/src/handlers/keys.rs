@@ -7,7 +7,7 @@ mod update;
 mod value;
 
 use axum::{routing, Router};
-use mist_db::models::key::{Key, KeyKind};
+use mist_db::models::key::{Key, KeyId, KeyKind};
 use utoipa::OpenApi;
 
 use crate::state::ApiState;
@@ -23,7 +23,7 @@ use crate::state::ApiState;
         value::value_handler,
         preferred::preferred_handler
     ),
-    components(schemas(Key, KeyKind, create::Payload, update::Payload))
+    components(schemas(KeyId, Key, KeyKind, create::Payload, update::Payload))
 )]
 pub(crate) struct Api;
 

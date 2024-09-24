@@ -9,7 +9,18 @@ use uuid::Uuid;
 use super::service::ServiceId;
 
 #[derive(
-    Default, Clone, Copy, PartialEq, Debug, Display, Serialize, Deserialize, AsRef, From, Into,
+    Default,
+    Clone,
+    Copy,
+    PartialEq,
+    Debug,
+    Display,
+    Serialize,
+    Deserialize,
+    AsRef,
+    From,
+    Into,
+    ToSchema,
 )]
 pub struct KeyId(pub Uuid);
 

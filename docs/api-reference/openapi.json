@@ -560,6 +560,10 @@
           }
         }
       },
+      "KeyId": {
+        "type": "string",
+        "format": "uuid"
+      },
       "KeyKind": {
         "type": "string",
         "enum": [
@@ -603,6 +607,10 @@
             "type": "string"
           }
         }
+      },
+      "ServiceId": {
+        "type": "string",
+        "format": "uuid"
       },
       "UpdateKeyPayload": {
         "type": "object",
